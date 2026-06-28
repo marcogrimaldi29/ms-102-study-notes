@@ -100,8 +100,8 @@
               "</div>" +
             "</div>" +
           "</div>" +
-          '<div class="star-cta">⭐ Found these notes helpful? <strong>Star the repo on [GitHub](https://github.com/marcogrimaldi29/ms-102-study-notes/)</strong> to support the project and help others find it.</div>' +
-          '<div class="contrib-note">🤝 <strong>Open to collaboration.</strong> Contributions, corrections and pull requests from the community are welcome — feel free to open an issue or PR on [GitHub](https://github.com/marcogrimaldi29/ms-102-study-notes/).</div>' +
+          '<div class="star-cta">⭐ Found these notes helpful? <strong>Star the repo on <a href="https://github.com/marcogrimaldi29/ms-102-study-notes" target="_blank" rel="noopener">GitHub</a></strong> to support the project and help others find it.</div>' +
+          '<div class="contrib-note">🤝 <strong>Open to collaboration.</strong> Contributions, corrections and pull requests from the community are welcome — feel free to open an issue or PR on <a href="https://github.com/marcogrimaldi29/ms-102-study-notes" target="_blank" rel="noopener">GitHub</a>.</div>' +
         "</div>" +
         '<div class="footer-col">' +
           "<h5>Study Domains</h5>" +
