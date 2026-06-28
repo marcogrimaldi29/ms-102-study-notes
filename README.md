@@ -105,15 +105,20 @@ Because the site lives under a **sub-path** (`/ms-102-study-notes/`) of `marcogr
 
 ## 📈 Analytics (cookieless, privacy-friendly)
 
-This repo is set up to use **[Umami](https://umami.is/)** — a **cookieless, privacy-respecting, GDPR-friendly** analytics platform that does **not** track personal data or require a cookie-consent banner.
+This repo uses **[Umami](https://umami.is/)** — a **cookieless, privacy-respecting, GDPR-friendly** analytics platform that does **not** track personal data or require a cookie-consent banner.
 
-Each HTML page contains a commented-out Umami snippet in the `<head>`:
+Analytics are loaded site-wide from [`assets/js/main.js`](assets/js/main.js) (included on every page), which injects the Umami script using a placeholder website ID:
 
-```html
-<!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+```js
+var id = "__UMAMI_WEBSITE_ID__"; // replaced at deploy time
 ```
 
-To enable it, replace `YOUR-UMAMI-WEBSITE-ID` with your own Umami website ID (and adjust the `src` if you self-host) and uncomment the line on each page.
+The `__UMAMI_WEBSITE_ID__` placeholder is replaced **at deploy time** from a repository secret, so the ID is never committed to source. (If the placeholder is left unreplaced — local dev or no secret — the loader is inert and no analytics are sent.) Setup:
+
+1. **Add the secret** — repo **Settings → Secrets and variables → Actions → New repository secret**, name `UMAMI_WEBSITE_ID`, value = your Umami website ID.
+2. **Switch Pages to Actions** — repo **Settings → Pages → Build and deployment → Source = GitHub Actions** (the included [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) injects the ID and deploys on every push to `main`).
+
+> **Note:** a Umami website ID is a public, client-side identifier — it is visible in the deployed page's source to anyone who looks. This setup keeps it out of the **repository** (and git history), but it cannot be hidden from site visitors. The ID is not sensitive, so a repository **variable** (`vars.UMAMI_WEBSITE_ID`) works just as well as a secret if you prefer. Locally (or with branch-based Pages), the placeholder stays unreplaced and no analytics are sent.
 
 ---
 

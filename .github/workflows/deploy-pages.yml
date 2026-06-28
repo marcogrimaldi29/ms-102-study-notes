@@ -1,0 +1,56 @@
+name: Deploy to GitHub Pages
+
+# Deploys the static site to GitHub Pages and injects the Umami website ID
+# from a repository secret at build time, so the ID is never committed to source.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject Umami website ID
+        env:
+          UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
+        run: |
+          if [ -n "$UMAMI_WEBSITE_ID" ]; then
+            # Replace the placeholder in every HTML file (and main.js if you move it there)
+            grep -rl '__UMAMI_WEBSITE_ID__' --include='*.html' --include='*.js' . | while read -r f; do
+              sed -i "s/__UMAMI_WEBSITE_ID__/${UMAMI_WEBSITE_ID}/g" "$f"
+            done
+            echo "Injected Umami website ID into matching files."
+          else
+            echo "::warning::UMAMI_WEBSITE_ID secret not set — placeholder left in place, analytics disabled."
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

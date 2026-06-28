@@ -208,8 +208,24 @@
     document.head.appendChild(s);
   }
 
+  // ---------- UMAMI (cookieless analytics) ----------
+  // The website ID is injected at deploy time from the UMAMI_WEBSITE_ID secret
+  // (see .github/workflows/deploy-pages.yml). The placeholder below is split when
+  // compared so the build-time replace never touches the guard string.
+  function loadUmami() {
+    var id = "__UMAMI_WEBSITE_ID__";
+    var unreplaced = "__UMAMI" + "_WEBSITE_ID__";
+    if (!id || id === unreplaced) return; // not configured (local dev / secret unset)
+    var s = document.createElement("script");
+    s.defer = true;
+    s.src = "https://cloud.umami.is/script.js";
+    s.setAttribute("data-website-id", id);
+    document.head.appendChild(s);
+  }
+
   // ---------- INIT ----------
   initTheme();
+  loadUmami();
   document.addEventListener("DOMContentLoaded", function () {
     buildHeader();
     buildFooter();
