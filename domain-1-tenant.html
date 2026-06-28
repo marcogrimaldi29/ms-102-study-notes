@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain 1 · Deploy &amp; Manage a Microsoft 365 Tenant — MS-102</title>
+  <meta name="description" content="MS-102 Domain 1 study notes: tenant creation, domains, org settings, Service Health, M365 Backup, users, groups, licensing, roles, administrative units and PIM.">
+  <meta name="author" content="Marco Grimaldi">
+  <link rel="canonical" href="https://marcogrimaldi29.com/ms-102-study-notes/domain-1-tenant.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0078d4">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="MS-102 Study Notes">
+  <meta property="og:title" content="MS-102 Domain 1 · Deploy and Manage a Microsoft 365 Tenant">
+  <meta property="og:description" content="Tenant creation, domains, org settings, Service Health, Microsoft 365 Backup, users, groups, licensing, roles, administrative units and PIM.">
+  <meta property="og:url" content="https://marcogrimaldi29.com/ms-102-study-notes/domain-1-tenant.html">
+  <meta property="og:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MS-102 Domain 1 · Deploy and Manage a Microsoft 365 Tenant">
+  <meta name="twitter:description" content="Tenant, domains, org settings, Service Health, Microsoft 365 Backup, users, groups, licensing, roles, administrative units and PIM.">
+  <meta name="twitter:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"MS-102 Domain 1 · Deploy and Manage a Microsoft 365 Tenant","description":"Tenant creation, domains, org settings, Service Health, Microsoft 365 Backup, users, groups, licensing, roles, administrative units and PIM.","inLanguage":"en","url":"https://marcogrimaldi29.com/ms-102-study-notes/domain-1-tenant.html","author":{"@type":"Person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/"},"isPartOf":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"MS-102 Study Notes","item":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"ListItem","position":2,"name":"Domain 1 · Tenant","item":"https://marcogrimaldi29.com/ms-102-study-notes/domain-1-tenant.html"}]}]}
+  </script>
+  <link rel="icon" href="assets/images/site-mark-no-bg.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+</head>
+<body data-page="tenant">
+  <div class="layout" style="--accent:var(--d1)">
+
+    <aside class="toc"><h4>On this page</h4><nav id="toc-list"></nav></aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div class="kicker">Domain 1 · 25–30%</div>
+        <h1>Deploy and manage a Microsoft 365 tenant</h1>
+        <p>Standing up the tenant, configuring organisation-wide settings and service health, and managing the building blocks every other workload depends on: users, groups, licences and admin roles.</p>
+      </div>
+
+      <div class="card">
+        <strong>This domain breaks into three objectives:</strong>
+        <ul style="margin-bottom:0">
+          <li><a href="#tenant">Implement and manage a Microsoft 365 tenant</a> — tenant, domains, org settings, health, updates, usage, Backup</li>
+          <li><a href="#users-groups">Manage users and groups</a> — users, external users, contacts, groups, shared mailboxes, licensing, bulk ops</li>
+          <li><a href="#roles">Manage roles and role groups</a> — RBAC, workload permissions, administrative units, PIM</li>
+        </ul>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="tenant"><span class="num">1.1</span> Implement and manage a Microsoft 365 tenant</h2>
+
+      <h3 id="create-tenant">Creating a tenant</h3>
+      <p>A <strong>tenant</strong> is a dedicated, isolated instance of Microsoft Entra ID created automatically when an organisation signs up for a Microsoft cloud subscription (M365, Azure, or Dynamics 365). It is the security and identity boundary for your organisation.</p>
+      <ul>
+        <li>The tenant gets an initial <strong>default domain</strong> of the form <code>yourcompany.onmicrosoft.com</code>. This can never be deleted and is used as a fallback routing address.</li>
+        <li>Choose the <strong>country/region at sign-up — it is permanent</strong> and determines data residency and which services are available. It cannot be changed later.</li>
+        <li>Tenant <strong>type</strong> is set at creation: <em>Workforce</em> (employees) vs the newer external/CIAM configurations; for MS-102 think standard organisational (workforce) tenant.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — region &amp; default domain are immutable</p>
+        <p>You cannot change the tenant <strong>country/region</strong> after creation, and the <code>*.onmicrosoft.com</code> domain cannot be removed. If asked to "move" data residency, the answer involves a new tenant / migration, not a setting.</p>
+      </div>
+
+      <h3 id="domains">Implementing and managing domains</h3>
+      <p>Add a custom domain (e.g. <code>contoso.com</code>) so users sign in and send mail with your brand instead of <code>*.onmicrosoft.com</code>.</p>
+      <ol class="steps">
+        <li><strong>Add the domain</strong> in the Microsoft 365 admin center (or Entra admin center).</li>
+        <li><strong>Verify ownership</strong> by adding a Microsoft-supplied <code>TXT</code> (or <code>MX</code>) record to your public DNS.</li>
+        <li><strong>Configure DNS records</strong> for the services: <code>MX</code> (mail routing), <code>CNAME</code> for <code>autodiscover</code>, <code>TXT</code> for SPF, <code>CNAME</code> records for Teams/Skype (<code>sip</code>, <code>lyncdiscover</code>) and <code>SRV</code> records, plus optional DKIM CNAMEs.</li>
+        <li><strong>Set the default domain</strong> used for new users if desired.</li>
+      </ol>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Record</th><th>Purpose</th><th>Notes / caveat</th></tr></thead>
+          <tbody>
+            <tr><td>TXT</td><td>Domain ownership verification</td><td>Microsoft generates the value; verification can take up to 72 h for DNS propagation</td></tr>
+            <tr><td>MX</td><td>Routes inbound email to Exchange Online</td><td>Lowest <strong>preference</strong> number = highest priority</td></tr>
+            <tr><td>CNAME (autodiscover)</td><td>Outlook client auto-configuration</td><td>Points to <code>autodiscover.outlook.com</code></td></tr>
+            <tr><td>TXT (SPF)</td><td>Anti-spoofing; lists authorised senders</td><td>Only <strong>one</strong> SPF record per domain — merge entries</td></tr>
+            <tr><td>CNAME (DKIM)</td><td>Signs outbound mail</td><td>Two selector CNAMEs; enable DKIM in Defender portal</td></tr>
+            <tr><td>SRV / CNAME (Teams)</td><td>Teams / federation discovery</td><td>Required for full Teams external connectivity</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Removing / transferring a domain</p>
+        <p>You cannot remove a custom domain while it is still referenced — e.g. by user UPNs, proxy addresses, groups, or as the default. Re-point those objects first. The <code>onmicrosoft.com</code> domain remains as the fallback.</p>
+      </div>
+
+      <h3 id="org-settings">Organisation settings (Security &amp; privacy, Organization profile)</h3>
+      <p>Found under <strong>Microsoft 365 admin center → Settings → Org settings</strong>, grouped into <em>Services</em>, <em>Security &amp; privacy</em>, and <em>Organization profile</em>.</p>
+      <dl class="terms">
+        <dt>Organization profile</dt>
+        <dd>Org name, address, technical contact, <strong>release preferences</strong> (Standard vs Targeted release for early features), and <strong>custom themes</strong> (logo, colours in the app header).</dd>
+        <dt>Security &amp; privacy</dt>
+        <dd>Self-service password reset link, sharing settings, idle session timeout, privacy statement, and the <strong>password expiration policy</strong> (Microsoft recommends "never expire").</dd>
+        <dt>Services</dt>
+        <dd>Per-service toggles: Bookings, Cortana, Microsoft Forms, reports (anonymised names), user owned apps and services, mail, etc.</dd>
+      </dl>
+      <div class="callout tip">
+        <p class="ct-title">Release preferences</p>
+        <p><strong>Targeted release</strong> can be set for the entire org or for selected users — useful to pilot UI/feature changes before they reach everyone on Standard release.</p>
+      </div>
+
+      <h3 id="service-health">Monitoring Service Health &amp; notifications</h3>
+      <p><strong>Health → Service health</strong> shows the live status of every service (Exchange, Teams, SharePoint, Entra, etc.). Each issue is an <strong>advisory</strong> (limited impact) or an <strong>incident</strong> (broad/critical impact).</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  A[Service event detected] --> B{Impact?}
+  B -->|Limited| C[Advisory]
+  B -->|Critical / widespread| D[Incident]
+  C --> E[Message center post]
+  D --> E
+  E --> F[Email notifications<br/>to chosen recipients]
+        </div>
+        <div class="mm-cap">Service Health feeds the Message center; configure email notifications to be alerted.</div>
+      </div>
+      <ul>
+        <li><strong>Message center</strong> (separate from Service health) announces upcoming <em>changes</em>, new/planned features and required actions — you can configure weekly digest emails and assign Message center reader role.</li>
+        <li>Configure <strong>Service health notifications</strong> (Preferences) to email up to 2 addresses per profile when incidents/advisories are posted.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Service health vs Message center</p>
+        <p><strong>Service health</strong> = current problems / outages. <strong>Message center</strong> = upcoming changes &amp; roadmap actions. Exam questions test that you pick the right one.</p>
+      </div>
+
+      <h3 id="network-insights">Network connectivity insights</h3>
+      <p>Under <strong>Health → Network connectivity</strong>. Microsoft 365 collects connectivity telemetry and surfaces a <strong>Network connectivity score</strong> per location.</p>
+      <ul>
+        <li>Key guidance: follow the Microsoft 365 <strong>connectivity principles</strong> — identify &amp; differentiate Optimize-category traffic, egress locally, avoid backhauling and hairpinning, and bypass proxies/inspection for Optimize endpoints.</li>
+        <li>Add office locations to get location-specific insights; data is collected from the Microsoft 365 client and the connectivity test tool (<code>connectivity.office.com</code>).</li>
+      </ul>
+      <p>Microsoft publishes endpoints in three <strong>traffic categories</strong> — handle each differently at the network edge:</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Category</th><th>Examples</th><th>Recommended handling</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Optimize</strong></td><td>Teams media, SharePoint/OneDrive, Exchange Online core</td><td>Bypass proxy/inspection, egress locally — highest performance impact</td></tr>
+            <tr><td><strong>Allow</strong></td><td>Other required M365 endpoints</td><td>Allow direct; low-overhead inspection acceptable</td></tr>
+            <tr><td><strong>Default</strong></td><td>Generic/ancillary services</td><td>Route via normal internet path/proxy</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Optimize traffic should bypass inspection</p>
+        <p>Performance problems in case studies usually point to <strong>backhauling or proxy/SSL inspection of Optimize traffic</strong>. The fix is <em>local egress and bypassing inspection for Optimize endpoints</em> — not adding bandwidth.</p>
+      </div>
+
+      <h3 id="software-updates">Software updates via the admin center</h3>
+      <p>The <strong>Microsoft 365 Apps</strong> update channels control how often desktop Office apps get features/fixes:</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Update channel</th><th>Feature cadence</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td>Current Channel</td><td>~Monthly (as available)</td><td>Most users — newest features fastest <span class="pill p-blue">default</span></td></tr>
+            <tr><td>Monthly Enterprise Channel</td><td>Once a month (predictable, 2nd Tuesday)</td><td>IT-managed orgs wanting a schedule</td></tr>
+            <tr><td>Semi-Annual Enterprise Channel</td><td>Every 6 months (Jan &amp; Jul)</td><td>Highly regulated / line-of-business app testing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Within the admin center, <strong>Settings → Org settings → Microsoft 365 Apps Installation options</strong> and the <strong>Microsoft 365 Apps admin center</strong> (<code>config.office.com</code>) manage channels, servicing profiles, and inventory.</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Deployment method</th><th>Use when</th></tr></thead>
+          <tbody>
+            <tr><td><strong>User self-install</strong> (portal)</td><td>Users have local admin; quickest, click-to-run from the portal</td></tr>
+            <tr><td><strong>Office Deployment Tool (ODT)</strong></td><td>Custom XML <code>configuration.xml</code> — pick architecture, channel, apps, languages; deploy locally or from a share</td></tr>
+            <tr><td><strong>Cloud / Microsoft 365 Apps admin center config</strong></td><td>Build a deployment package &amp; <strong>servicing profile</strong> (auto-update rings) centrally</td></tr>
+            <tr><td><strong>Intune / Configuration Manager</strong></td><td>Managed push to devices at scale</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Servicing profile</p>
+        <p>A <strong>servicing profile</strong> takes over update management for a set of devices — Microsoft auto-rolls updates in waves with monitoring/rollback, overriding the device's configured channel for those updates.</p>
+      </div>
+
+      <h3 id="adoption-usage">Monitoring adoption &amp; usage</h3>
+      <ul>
+        <li><strong>Reports → Usage</strong>: per-service activity (email, Teams, SharePoint, OneDrive, active users, etc.). Default retention windows of 7/30/90/180 days.</li>
+        <li><strong>Microsoft 365 Adoption Score</strong> (Reports → Adoption Score): organisational benchmarks across communication, meetings, content collaboration, mobility, teamwork, plus endpoint/network experiences.</li>
+        <li>Privacy: in Org settings you can <strong>de-identify (conceal) user, group and site names</strong> in all reports.</li>
+      </ul>
+      <div class="callout note">
+        <p class="ct-title">Who can see reports</p>
+        <p>Global admin, global reader, report reader, and the relevant service admins (Exchange, Teams, SharePoint) can view usage reports.</p>
+      </div>
+
+      <h3 id="m365-backup">Configure &amp; manage Microsoft 365 Backup</h3>
+      <p><strong>Microsoft 365 Backup</strong> is a Microsoft-native, pay-as-you-go (Azure-billed, requires billing/syntex setup) service protecting <strong>Exchange Online, OneDrive, and SharePoint</strong>.</p>
+      <ul>
+        <li>Provides fast, large-scale restore to a <strong>point in time within the last 365 days</strong>, with data kept inside the Microsoft 365 security/compliance boundary (no third-party copy).</li>
+        <li>Set up via the <strong>Microsoft 365 admin center → Settings → Microsoft 365 Backup</strong>; requires <strong>pay-as-you-go billing</strong> linked to an Azure subscription &amp; resource group.</li>
+        <li>Backup policies target sites/accounts (by inclusion rules); restores are self-service and much faster than legacy methods.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Backup ≠ Retention</p>
+        <p>M365 Backup protects against accidental/malicious data loss with fast point-in-time restore. <strong>Retention policies/labels (Purview)</strong> are for compliance/legal preservation. Don't confuse them — and Backup requires <strong>PAYG Azure billing</strong> enabled.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="users-groups"><span class="num">1.2</span> Manage users and groups</h2>
+
+      <h3 id="users">Creating &amp; managing users (incl. external users)</h3>
+      <p>Users live in <strong>Microsoft Entra ID</strong>. Create them in the M365 admin center or Entra admin center. Key attributes: <strong>UPN</strong> (sign-in name, must use a verified domain), display name, usage location (required before assigning licences), and group memberships.</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Account type</th><th>How it is created</th><th>Sign-in</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cloud-only</strong></td><td>Created directly in Entra ID</td><td>Entra credentials</td></tr>
+            <tr><td><strong>Synchronised</strong></td><td>Synced from on-prem AD via Entra Connect/Cloud Sync</td><td>Managed in on-prem AD</td></tr>
+            <tr><td><strong>Guest (B2B)</strong></td><td>Invited by email; UPN ends <code>#EXT#@tenant</code></td><td>Their own home org / one-time passcode</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>External / guest users (Entra B2B):</strong> invited collaborators who authenticate with their own identity. Managed under <strong>Entra ID → External Identities</strong>: configure external collaboration settings (who can invite), guest user permissions, and cross-tenant access settings. Deleted users go to a recycle bin and are <strong>recoverable for 30 days</strong>.</p>
+      <div class="callout tip">
+        <p class="ct-title">Restore / soft-delete</p>
+        <p>Deleted Entra users are recoverable for <strong>30 days</strong> from the deleted users list; after that they are permanently purged.</p>
+      </div>
+      <p><strong>Governing external collaboration</strong> (Entra ID → External Identities):</p>
+      <ul>
+        <li><strong>External collaboration settings</strong> — who can invite guests (everyone / admins &amp; specific roles / nobody), guest permission level, and an allow/deny domain list for invitations.</li>
+        <li><strong>Cross-tenant access settings</strong> — granular B2B <em>inbound</em>/<em>outbound</em> trust per partner Entra tenant: which users/groups/apps, and whether to <strong>trust their MFA &amp; device compliance claims</strong> (so guests don't re-do MFA).</li>
+        <li>Guests can authenticate via their home Entra account, a Microsoft account, <strong>one-time passcode</strong> email, or configured identity providers (Google/SAML).</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — B2B vs B2C</p>
+        <p><strong>Entra B2B</strong> = invite external <em>business/partner</em> users as guests into your workforce tenant (MS-102 scope). <strong>Entra External ID / B2C</strong> = customer-facing identity for your apps — a different tenant type, generally out of MS-102 scope. Trusting a partner's MFA is done in <strong>cross-tenant access settings</strong>, not per-user.</p>
+      </div>
+
+      <h3 id="contacts">Mail contacts</h3>
+      <p><strong>Contacts</strong> (M365 admin center → Users → Contacts, or Exchange) are external people with no licence/mailbox who appear in the Global Address List. Useful for vendors/partners you email frequently. A <strong>mail-enabled user</strong> differs — it has a sign-in but mail delivered externally.</p>
+
+      <h3 id="groups">Groups, Microsoft 365 Groups &amp; shared mailboxes</h3>
+      <div class="table-wrap">
+        <table class="tbl t-slate">
+          <thead><tr><th>Group type</th><th>Purpose</th><th>Can assign licences?</th><th>Email?</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Microsoft 365 Group</strong></td><td>Collaboration: shared mailbox, calendar, SharePoint site, Planner, Teams</td><td>✅ (membership)</td><td>✅</td></tr>
+            <tr><td><strong>Security group</strong></td><td>Grant access to resources / apps; target policies</td><td>✅</td><td>❌ (unless mail-enabled)</td></tr>
+            <tr><td><strong>Mail-enabled security</strong></td><td>Security + email distribution</td><td>❌ for group licensing</td><td>✅</td></tr>
+            <tr><td><strong>Distribution list</strong></td><td>Email broadcast only</td><td>❌</td><td>✅</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Membership types:</strong> <em>Assigned</em> (manual), <em>Dynamic user</em>, or <em>Dynamic device</em> (rule-based on attributes — requires <strong>Entra ID P1</strong>). A group can't be both dynamic-user and dynamic-device.</p>
+      <p><strong>Shared mailboxes</strong> let multiple users read/send as a common address (e.g. <code>support@</code>). They are <strong>free up to 50 GB</strong> and need <strong>no licence</strong> — unless they exceed 50 GB or you enable In-Place Archive/Litigation Hold, which require an Exchange Online Plan 2 licence.</p>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — dynamic membership needs P1</p>
+        <p>Dynamic group membership rules require <strong>Microsoft Entra ID P1</strong>. Plain assigned membership is free. Also: a shared mailbox needs a licence only when &gt;50 GB <em>or</em> when placed on hold/archive.</p>
+      </div>
+
+      <h4>Microsoft 365 Groups governance</h4>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Setting</th><th>What it controls</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Creation restriction</strong></td><td>Limit who can create M365 Groups (and so Teams/Planner) to members of a security group — set with Graph PowerShell (<code>EnableGroupCreation</code> = false + <code>GroupCreationAllowedGroupId</code>)</td></tr>
+            <tr><td><strong>Naming policy</strong></td><td>Add a prefix/suffix (e.g. <code>GRP_</code> + dept) and a blocked-words list. Requires <strong>Entra ID P1</strong></td></tr>
+            <tr><td><strong>Expiration policy</strong></td><td>Auto-expire inactive groups after 180/365/custom days; owners must renew or the group (and its resources) is deleted. Requires <strong>Entra ID P1</strong></td></tr>
+            <tr><td><strong>Guest access</strong></td><td>Allow/deny adding guests to groups (ties into External Identities settings)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p class="ct-title">Soft-delete window</p>
+        <p>A deleted Microsoft 365 Group (and its mailbox, site, Planner) is <strong>recoverable for 30 days</strong>, after which it is permanently removed — same window as deleted users.</p>
+      </div>
+
+      <h3 id="licensing">Licences &amp; group-based licensing</h3>
+      <p>Licences can be assigned <strong>directly</strong> to a user or via <strong>group-based licensing</strong> (assign the licence to a group → all members inherit it). Group-based licensing requires <strong>Entra ID P1</strong> for the licensing engine.</p>
+      <ul>
+        <li><strong>Usage location</strong> must be set on the user before any licence is assigned (drives service availability by region).</li>
+        <li>You can disable individual <strong>service plans</strong> within a licence (e.g. turn off Yammer while keeping Exchange).</li>
+        <li>If two groups assign overlapping licences, the user receives the union; conflicts (e.g. not enough licences, conflicting service plans) surface as <strong>licensing errors</strong> to resolve.</li>
+      </ul>
+      <div class="callout warn">
+        <p class="ct-title">No licences left / direct vs inherited</p>
+        <p>You cannot remove a directly-inherited group licence from a single user — you must remove them from the group or move the assignment. If a group's licence count runs out, members show an error until more licences are added.</p>
+      </div>
+
+      <h3 id="bulk">Bulk user management &amp; PowerShell</h3>
+      <p>Options: <strong>CSV bulk add/import</strong> in the admin center, and PowerShell. The <strong>MSOnline</strong> and <strong>AzureAD</strong> modules are <strong>deprecated/retired</strong> — the exam now expects <strong>Microsoft Graph PowerShell</strong> (and the Microsoft Entra PowerShell module).</p>
+      <pre class="code"><code><span class="cm"># Modern: Microsoft Graph PowerShell SDK</span>
+Install-Module Microsoft.Graph -Scope CurrentUser
+Connect-MgGraph -Scopes <span class="st">"User.ReadWrite.All"</span>
+
+<span class="cm"># Bulk-create users from a CSV</span>
+Import-Csv users.csv | ForEach-Object {
+  <span class="kw">$pwd</span> = @{ Password = <span class="st">'P@ssw0rd!'</span>; ForceChangePasswordNextSignIn = <span class="kw">$true</span> }
+  New-MgUser -DisplayName <span class="kw">$_</span>.Name -UserPrincipalName <span class="kw">$_</span>.UPN `
+    -MailNickname <span class="kw">$_</span>.Alias -AccountEnabled -PasswordProfile <span class="kw">$pwd</span> -UsageLocation <span class="st">"US"</span>
+}</code></pre>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — use Microsoft Graph PowerShell</p>
+        <p>If a question offers <code>Connect-MsolService</code> / <code>AzureAD</code> cmdlets vs <code>Connect-MgGraph</code> / <code>Microsoft.Graph</code>, the correct modern answer is <strong>Microsoft Graph PowerShell</strong>. MSOnline &amp; AzureAD modules are retired.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="roles"><span class="num">1.3</span> Manage roles and role groups</h2>
+
+      <h3 id="rbac">Roles in Microsoft 365 &amp; Entra ID</h3>
+      <p>Apply <strong>least privilege</strong>: assign the most specific role for the task rather than Global Administrator. Microsoft recommends <strong>fewer than 5 Global Admins</strong> and emergency "break-glass" accounts.</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Role</th><th>Can do</th><th>Cannot</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Global Administrator</strong></td><td>Everything, incl. billing &amp; all admin centers</td><td>— (most privileged; minimise count)</td></tr>
+            <tr><td><strong>Global Reader</strong></td><td>Read-only across everything Global Admin sees</td><td>Make any changes</td></tr>
+            <tr><td><strong>User Administrator</strong></td><td>Create/manage users &amp; groups, reset most passwords</td><td>Reset passwords of higher-privileged admins</td></tr>
+            <tr><td><strong>Privileged Role Administrator</strong></td><td>Manage role assignments &amp; PIM settings</td><td>—</td></tr>
+            <tr><td><strong>Helpdesk Administrator</strong></td><td>Reset passwords for non-admin users, manage service requests</td><td>Manage admin accounts</td></tr>
+            <tr><td><strong>Billing Administrator</strong></td><td>Purchases, subscriptions, support tickets</td><td>Manage users/security</td></tr>
+            <tr><td><strong>Exchange / SharePoint / Teams Admin</strong></td><td>Manage that single workload</td><td>Other workloads</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Entra roles vs Azure RBAC roles</p>
+        <p><strong>Entra ID roles</strong> control access to Entra &amp; M365 resources (identity, users, M365 services). <strong>Azure RBAC roles</strong> control Azure resource management (subscriptions, VMs). They are <em>separate</em> systems — a Global Admin is not automatically an Azure Owner (though they can elevate to gain access to all Azure subscriptions via a toggle).</p>
+      </div>
+
+      <h3 id="workload-perms">Workload permissions (Defender XDR, Purview)</h3>
+      <ul>
+        <li><strong>Microsoft Defender XDR</strong> &amp; <strong>Microsoft Purview</strong> historically use their own <strong>role groups</strong> (e.g. Purview's <em>Compliance Administrator</em>, <em>eDiscovery Manager</em>; Defender's email &amp; collaboration permissions). These can be managed in-portal or mapped from Entra roles.</li>
+        <li>Microsoft is consolidating these under <strong>Microsoft Defender XDR Unified RBAC</strong> and Entra roles — but role <em>groups</em> still appear on the exam (add/remove members to grant scoped admin rights without Global Admin).</li>
+      </ul>
+      <div class="callout tip">
+        <p class="ct-title">Role group pattern</p>
+        <p>For Purview/Defender, you grant access by <strong>adding users to a role group</strong> (a bundle of granular roles). Create a custom role group when built-in ones don't fit least privilege.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Built-in role group</th><th>Grants</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Compliance Administrator</strong> (Purview)</td><td>Manage most Purview compliance features (DLP, retention, labels)</td></tr>
+            <tr><td><strong>Compliance Data Administrator</strong></td><td>Compliance + data classification &amp; device management</td></tr>
+            <tr><td><strong>eDiscovery Manager / Administrator</strong></td><td>Run eDiscovery cases; Administrator sees all cases</td></tr>
+            <tr><td><strong>Records Management</strong></td><td>Configure retention labels &amp; records features</td></tr>
+            <tr><td><strong>Security Administrator</strong> (Defender)</td><td>Manage security features &amp; policies in the Defender portal</td></tr>
+            <tr><td><strong>Security Reader / Global Reader</strong></td><td>Read-only across security &amp; compliance</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — grant compliance access without Global Admin</p>
+        <p>To let someone manage DLP/retention without over-privileging, add them to the <strong>Compliance Administrator</strong> role group in Purview — <em>not</em> Global Administrator. Reader access for auditors → <strong>Global Reader</strong> or <strong>Security/Compliance Reader</strong>.</p>
+      </div>
+
+      <h3 id="admin-units">Delegation with Administrative Units (AUs)</h3>
+      <p>An <strong>administrative unit</strong> scopes an admin's authority to a <em>subset</em> of users/groups/devices (e.g. one region or department). Requires <strong>Entra ID P1</strong> for members; assigning roles scoped to an AU lets, say, a "London Helpdesk Admin" reset passwords only for London users.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+  GA[Global Admin<br/>tenant-wide] --> AU1
+  GA --> AU2
+  subgraph Scoped delegation
+    AU1[AU: Sales<br/>Helpdesk Admin scoped here]
+    AU2[AU: Europe<br/>User Admin scoped here]
+  end
+  AU1 --> U1[Sales users only]
+  AU2 --> U2[Europe users only]
+        </div>
+        <div class="mm-cap">Administrative units restrict a role assignment to only the members of that unit.</div>
+      </div>
+      <ul>
+        <li>AU membership can be <strong>assigned</strong> or <strong>dynamic</strong> (rule-based, P1 required).</li>
+        <li><strong>Restricted Management AUs</strong> (newer) protect members so that <em>only</em> AU-scoped admins — not tenant-level admins like User Admin — can manage them.</li>
+      </ul>
+
+      <h3 id="pim">Privileged Identity Management (PIM)</h3>
+      <p><strong>PIM</strong> provides <strong>just-in-time</strong>, time-bound, approval-based privileged access — you make roles <em>eligible</em> rather than permanently <em>active</em>. Requires <strong>Microsoft Entra ID P2</strong> (or Entra ID Governance).</p>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>PIM concept</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Eligible assignment</strong></td><td>User can <em>activate</em> the role when needed (must request)</td></tr>
+            <tr><td><strong>Active assignment</strong></td><td>Role is permanently/temporarily active without activation</td></tr>
+            <tr><td><strong>Activation</strong></td><td>User elevates for a set window (e.g. 1–8 h), optionally requiring MFA, justification, ticket number, and approval</td></tr>
+            <tr><td><strong>Access review</strong></td><td>Recurring attestation that assignments are still needed</td></tr>
+            <tr><td><strong>Alerts &amp; audit</strong></td><td>Notifications for suspicious activations; full audit history</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  E[Eligible assignment] --> R[User requests activation]
+  R --> G{Activation requirements}
+  G --> MFA[MFA / justification /<br/>ticket number]
+  G --> AP[Approval if required]
+  MFA --> A[Role ACTIVE<br/>for limited window]
+  AP --> A
+  A --> X[Auto-expires →<br/>back to eligible]
+        </div>
+        <div class="mm-cap">PIM just-in-time flow: eligible → request → satisfy requirements → time-bound active → auto-expire.</div>
+      </div>
+      <p><strong>Per-role settings</strong> (Role settings): max activation duration, require MFA on activation, require justification/ticket, require approval (and approvers), and activation/assignment notifications. <strong>Access reviews</strong> periodically re-attest eligibility.</p>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — licence editions to memorise</p>
+        <p><strong>PIM &amp; Identity Protection = Entra ID P2.</strong> <strong>Conditional Access, SSPR (writeback for hybrid), dynamic groups, group-based licensing, administrative units = Entra ID P1.</strong> Security defaults &amp; basic MFA = free. These licence facts are heavily tested.</p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="index.html"><div class="pg-dir">← Back</div><div class="pg-title">Home &amp; overview</div></a>
+        <a class="next" href="domain-2-identity.html"><div class="pg-dir">Next →</div><div class="pg-title">Domain 2 · Entra identity &amp; access</div></a>
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

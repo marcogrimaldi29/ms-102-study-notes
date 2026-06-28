@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain 2 · Microsoft Entra Identity &amp; Access — MS-102</title>
+  <meta name="description" content="MS-102 Domain 2 study notes: directory synchronization (Entra Connect & Cloud Sync), IdFix, Connect Health, authentication methods, SSPR, Password Protection, Identity Protection, Conditional Access and MFA.">
+  <meta name="author" content="Marco Grimaldi">
+  <link rel="canonical" href="https://marcogrimaldi29.com/ms-102-study-notes/domain-2-identity.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0078d4">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="MS-102 Study Notes">
+  <meta property="og:title" content="MS-102 Domain 2 · Microsoft Entra Identity and Access">
+  <meta property="og:description" content="Directory synchronization with Entra Connect and Cloud Sync, IdFix, authentication methods, SSPR, Password Protection, Identity Protection, Conditional Access and MFA.">
+  <meta property="og:url" content="https://marcogrimaldi29.com/ms-102-study-notes/domain-2-identity.html">
+  <meta property="og:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MS-102 Domain 2 · Microsoft Entra Identity and Access">
+  <meta name="twitter:description" content="Entra Connect and Cloud Sync, IdFix, authentication methods, SSPR, Identity Protection, Conditional Access and MFA.">
+  <meta name="twitter:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"MS-102 Domain 2 · Microsoft Entra Identity and Access","description":"Directory synchronization with Entra Connect and Cloud Sync, IdFix, authentication methods, SSPR, Password Protection, Identity Protection, Conditional Access and MFA.","inLanguage":"en","url":"https://marcogrimaldi29.com/ms-102-study-notes/domain-2-identity.html","author":{"@type":"Person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/"},"isPartOf":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"MS-102 Study Notes","item":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"ListItem","position":2,"name":"Domain 2 · Identity and Access","item":"https://marcogrimaldi29.com/ms-102-study-notes/domain-2-identity.html"}]}]}
+  </script>
+  <link rel="icon" href="assets/images/site-mark-no-bg.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+</head>
+<body data-page="identity">
+  <div class="layout" style="--accent:var(--d2)">
+
+    <aside class="toc"><h4>On this page</h4><nav id="toc-list"></nav></aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div class="kicker">Domain 2 · 25–30%</div>
+        <h1>Implement and manage Microsoft Entra identity and access</h1>
+        <p>Bridging on-premises Active Directory to the cloud, securing how users prove who they are, and controlling access dynamically with Identity Protection and Conditional Access.</p>
+      </div>
+
+      <div class="card">
+        <strong>Three objectives:</strong>
+        <ul style="margin-bottom:0">
+          <li><a href="#sync">Identity synchronization</a> — IdFix, Entra Connect Sync vs Cloud Sync, Connect Health, troubleshooting</li>
+          <li><a href="#auth">Authentication</a> — methods, SSPR, Password Protection, troubleshooting sign-in</li>
+          <li><a href="#secure-access">Secure access</a> — Identity Protection, Conditional Access, MFA</li>
+        </ul>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="sync"><span class="num">2.1</span> Identity synchronization with Microsoft Entra</h2>
+
+      <h3 id="auth-models">Authentication models (foundational)</h3>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>Model</th><th>Where password is validated</th><th>Needs on-prem servers?</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Password Hash Sync (PHS)</strong></td><td>In the cloud (hash-of-a-hash synced)</td><td>No (just sync)</td><td>Simplest, most resilient; enables leaked-credential detection in Identity Protection <span class="pill p-green">recommended</span></td></tr>
+            <tr><td><strong>Pass-through Auth (PTA)</strong></td><td>On-prem AD (via lightweight agents)</td><td>Yes — agents</td><td>Password never stored in cloud; needs HA agents</td></tr>
+            <tr><td><strong>Federation (AD FS)</strong></td><td>On-prem AD FS farm</td><td>Yes — AD FS infra</td><td>Most complex; for advanced/3rd-party MFA, smartcards</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p class="ct-title">Seamless SSO</p>
+        <p><strong>Seamless single sign-on (SSSO)</strong> can be layered on PHS or PTA to auto-sign-in domain-joined devices on the corporate network. Not needed (and not used) with AD FS or with Hybrid/Entra-joined modern devices that use PRT.</p>
+      </div>
+
+      <h3 id="idfix">Prepare for sync — IdFix &amp; prerequisites</h3>
+      <p>Before syncing, clean the directory. <strong>IdFix</strong> is the free tool that scans on-prem AD for errors and fixes them in bulk:</p>
+      <ul>
+        <li>Detects <strong>duplicate</strong> or invalid <strong>proxyAddresses</strong> and <strong>userPrincipalName</strong> values, invalid characters, length issues, and blank/format problems.</li>
+        <li>UPNs should use a <strong>routable, verified domain</strong> (not <code>.local</code>). Add a UPN suffix in AD and verify the domain in Entra first.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — IdFix scope</p>
+        <p>IdFix is specifically for <strong>directory object/attribute remediation before sync</strong> (duplicates, invalid UPN/proxyAddresses). It does not configure sync or test connectivity — that's a common distractor.</p>
+      </div>
+
+      <h3 id="connect-vs-cloudsync">Entra Connect Sync vs Entra Cloud Sync</h3>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>Capability</th><th>Entra Connect Sync</th><th>Entra Cloud Sync</th></tr></thead>
+          <tbody>
+            <tr><td>Architecture</td><td>Full app + SQL on a Windows server you maintain</td><td>Lightweight <strong>cloud-managed agent(s)</strong>; config lives in the cloud</td></tr>
+            <tr><td>Multiple disconnected forests</td><td>One server can't sync disjoint forests easily</td><td>✅ Can sync <strong>multiple disconnected forests</strong></td></tr>
+            <tr><td>High availability</td><td>Needs staging server</td><td>✅ Built-in via multiple agents</td></tr>
+            <tr><td>Device sync / Hybrid Join</td><td>✅ Supported</td><td>❌ Not supported (yet)</td></tr>
+            <tr><td>Pass-through auth, large/complex filtering, Exchange hybrid writeback</td><td>✅ Full feature set</td><td>Limited; growing</td></tr>
+            <tr><td>Group writeback, complex sync rules</td><td>✅</td><td>Limited</td></tr>
+            <tr><td>Object volume per agent</td><td>Very large</td><td>Up to ~150k objects per agent</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — which to choose</p>
+        <p>Pick <strong>Cloud Sync</strong> for: multiple disconnected forests, simple needs, lightweight HA, no on-prem footprint. Pick <strong>Connect Sync</strong> when you need <strong>device/Hybrid Join sync, Exchange hybrid writeback, complex transformations, or pass-through auth at scale</strong>. Both can run side-by-side during migration but must not manage the same objects.</p>
+      </div>
+      <p><strong>Sync features (Connect Sync):</strong></p>
+      <ul>
+        <li><strong>Filtering</strong> — limit scope by domain, OU, or attribute.</li>
+        <li><strong>Password writeback</strong> — required so SSPR/PIM password changes flow back to on-prem AD (needs Entra ID P1).</li>
+        <li><strong>Device writeback</strong>, <strong>group writeback</strong>, and <strong>Exchange hybrid</strong> options.</li>
+        <li>Default sync cycle is every <strong>30 minutes</strong>; force with <code>Start-ADSyncSyncCycle -PolicyType Delta</code>.</li>
+        <li><strong>Source Anchor / immutableID</strong> (default <code>ms-DS-ConsistencyGuid</code>) uniquely and permanently links on-prem to cloud objects.</li>
+      </ul>
+      <pre class="code"><code><span class="cm"># Force a delta (incremental) sync cycle on the Connect server</span>
+Start-ADSyncSyncCycle -PolicyType Delta
+<span class="cm"># Full (initial) sync</span>
+Start-ADSyncSyncCycle -PolicyType Initial</code></pre>
+
+      <h3 id="connect-health">Monitor with Entra Connect Health</h3>
+      <p><strong>Microsoft Entra Connect Health</strong> uses agents to surface sync health, errors, latency, and alerts in the Entra admin center. Requires <strong>Entra ID P1</strong> (roughly one P1 licence per agent monitored). It can monitor three roles, each with its own agent:</p>
+      <ul>
+        <li><strong>Connect Health for sync</strong> — sync errors, latency, object/export counts, alerts on failed runs.</li>
+        <li><strong>Connect Health for AD FS</strong> — token requests/sec, failed sign-ins, bad-password attempts (extranet lockout signals).</li>
+        <li><strong>Connect Health for AD DS</strong> — domain-controller health, replication status, LDAP/Kerberos performance.</li>
+      </ul>
+
+      <h3 id="sync-troubleshoot">Troubleshooting synchronization</h3>
+      <ul>
+        <li><strong>Synchronization Service Manager</strong> (miisclient) and <strong>Synchronization Rules Editor</strong> on the Connect server diagnose run profiles &amp; rule logic.</li>
+        <li><strong>Duplicate attribute resiliency</strong> quarantines conflicting <code>proxyAddresses</code>/UPN instead of failing the whole sync.</li>
+        <li>Sync errors appear in the Entra admin center under <strong>Health &amp; monitoring</strong>; common causes: data mismatch, duplicates, large object changes blocked by the <strong>export deletion threshold</strong> (default 500 — a mass change is blocked until you allow it).</li>
+        <li>For Cloud Sync, use the <strong>provisioning logs</strong> and agent status in the portal.</li>
+      </ul>
+      <div class="callout warn">
+        <p class="ct-title">Accidental deletion threshold</p>
+        <p>If more than <strong>500 objects</strong> would be deleted in one cycle, Connect halts the export to prevent mass deletion. Re-run after confirming, or temporarily raise the threshold with <code>Enable-ADSyncExportDeletionThreshold</code>.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="auth"><span class="num">2.2</span> Implement and manage authentication</h2>
+
+      <h3 id="auth-methods">Authentication methods</h3>
+      <p>Managed centrally in the <strong>Authentication methods policy</strong> (Entra admin center → Protection → Authentication methods). Microsoft is migrating legacy MFA/SSPR method management into this single converged policy — target users by group.</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Method</th><th>Strength</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Passkey (FIDO2) / Windows Hello</strong></td><td>Phishing-resistant <span class="pill p-green">strongest</span></td><td>Microsoft's recommended direction</td></tr>
+            <tr><td><strong>Certificate-based auth (CBA)</strong></td><td>Phishing-resistant</td><td>Smartcards / PKI</td></tr>
+            <tr><td><strong>Microsoft Authenticator</strong></td><td>Strong</td><td>Push w/ <strong>number matching</strong> (now enforced), or passwordless phone sign-in</td></tr>
+            <tr><td><strong>OATH hardware/software tokens</strong></td><td>Medium</td><td>TOTP codes</td></tr>
+            <tr><td><strong>SMS / Voice call</strong></td><td>Weakest</td><td>Phishable; avoid as primary</td></tr>
+            <tr><td><strong>Temporary Access Pass (TAP)</strong></td><td>Onboarding</td><td>Time-limited passcode to bootstrap passwordless / register methods</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Number matching &amp; additional context</p>
+        <p>Authenticator <strong>number matching</strong> is enabled by default and mandatory — the user types the number shown on the sign-in screen, defeating "MFA fatigue" prompt-bombing. You can also show app/location context.</p>
+      </div>
+
+      <h3 id="sspr">Self-Service Password Reset (SSPR)</h3>
+      <ul>
+        <li>Lets users reset/unlock their own password without helpdesk. Scope: <strong>None / Selected (group) / All</strong>.</li>
+        <li>Requires a defined number of <strong>authentication methods</strong> (default 1 or 2) from the registered options.</li>
+        <li><strong>Combined registration</strong> lets users register SSPR + MFA methods at once.</li>
+        <li>For <strong>hybrid</strong> users to reset their on-prem password via SSPR, you must enable <strong>password writeback</strong> in Entra Connect/Cloud Sync (Entra ID P1).</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — SSPR for admins</p>
+        <p>Admin (privileged) accounts <strong>always</strong> require <em>two</em> methods and a strong default policy — you can't reduce it. And SSPR write-back to on-prem AD <strong>requires password writeback</strong> configured in the sync engine.</p>
+      </div>
+
+      <h3 id="password-protection">Microsoft Entra Password Protection</h3>
+      <ul>
+        <li>Blocks weak passwords using a <strong>global banned-password list</strong> (Microsoft-managed) plus a <strong>custom banned list</strong> (up to ~1000 terms — org names, products) you define.</li>
+        <li>Uses fuzzy matching (leetspeak, substring) and a points-based scoring system.</li>
+        <li><strong>On-premises Password Protection</strong> extends the same banning to AD DS via a <strong>DC agent</strong> + <strong>proxy</strong> service — runs in <em>audit</em> or <em>enforce</em> mode. Requires <strong>Entra ID P1</strong>.</li>
+      </ul>
+
+      <h3 id="auth-troubleshoot">Investigate &amp; resolve authentication issues</h3>
+      <ul>
+        <li><strong>Sign-in logs</strong> (Entra → Monitoring) show interactive/non-interactive sign-ins with <strong>failure reason &amp; error code</strong>, CA policy applied, and device/location. Four log types: interactive, non-interactive, service principal, managed identity.</li>
+        <li><strong>Sign-in diagnostic</strong> wizard guides remediation of common failures (MFA, CA block, etc.).</li>
+        <li>Watch for <strong>legacy authentication</strong> (POP/IMAP/SMTP basic auth) — it bypasses MFA and should be blocked via Conditional Access.</li>
+      </ul>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>Error code</th><th>Meaning</th><th>Typical fix</th></tr></thead>
+          <tbody>
+            <tr><td><strong>50126</strong></td><td>Invalid username or password</td><td>Reset/verify credentials</td></tr>
+            <tr><td><strong>50053</strong></td><td>Account locked (smart lockout) or too many attempts</td><td>Wait out lockout / investigate spray</td></tr>
+            <tr><td><strong>50055</strong></td><td>Password expired</td><td>Reset password</td></tr>
+            <tr><td><strong>53003</strong></td><td>Blocked by a <strong>Conditional Access</strong> policy</td><td>Review which CA policy applied</td></tr>
+            <tr><td><strong>53004</strong></td><td>MFA registration required / blocked</td><td>Complete security-info registration</td></tr>
+            <tr><td><strong>500121</strong></td><td>MFA challenge not completed (timeout/denied)</td><td>Re-attempt / check Authenticator</td></tr>
+            <tr><td><strong>50057 / 50058</strong></td><td>Account disabled / session info missing</td><td>Re-enable account / re-auth</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p class="ct-title">Migrating auth methods — staged rollout</p>
+        <p><strong>Staged rollout</strong> moves selected groups from <em>federated</em> (AD FS) to cloud authentication (PHS or PTA) for testing <em>before</em> cutting the whole domain over with <code>Set-MsolDomainAuthentication</code>/Graph. It is a test feature — not for permanent mixed-state operation.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="secure-access"><span class="num">2.3</span> Implement and manage secure access</h2>
+
+      <h3 id="identity-protection">Microsoft Entra Identity Protection</h3>
+      <p>Uses Microsoft's threat intelligence to detect <strong>risk</strong> and respond automatically. Requires <strong>Entra ID P2</strong>.</p>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>Risk type</th><th>What it measures</th><th>Example signals</th></tr></thead>
+          <tbody>
+            <tr><td><strong>User risk</strong></td><td>Probability the <em>identity</em> is compromised</td><td>Leaked credentials, anomalous user behaviour</td></tr>
+            <tr><td><strong>Sign-in risk</strong></td><td>Probability a given <em>sign-in</em> isn't the legit owner</td><td>Anonymous IP/Tor, atypical travel, unfamiliar sign-in properties, malware-linked IP, password spray</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Three policy types:</p>
+      <ul>
+        <li><strong>User risk policy</strong> — e.g. require secure password change when user risk is High.</li>
+        <li><strong>Sign-in risk policy</strong> — e.g. require MFA when sign-in risk is Medium+.</li>
+        <li><strong>MFA registration policy</strong> — force users to register MFA so remediation is possible.</li>
+      </ul>
+      <div class="callout tip">
+        <p class="ct-title">Best practice — drive risk via Conditional Access</p>
+        <p>Microsoft now recommends managing user-risk and sign-in-risk conditions <strong>inside Conditional Access policies</strong> rather than the legacy standalone IP policies — gives you full CA controls (e.g. require password change <em>and</em> MFA).</p>
+      </div>
+      <h4>Investigating &amp; remediating risk</h4>
+      <p>Risk is scored <strong>Low / Medium / High</strong>. Reports: <strong>Risky users</strong>, <strong>Risky sign-ins</strong>, <strong>Risk detections</strong>, and <strong>Risky workload identities</strong> (apps/service principals). Remediation closes the loop:</p>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>Admin / automatic action</th><th>Effect on risk</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Self-remediation</strong> (MFA + secure password change)</td><td>Auto-clears user risk if policy allows</td></tr>
+            <tr><td><strong>Confirm user compromised</strong></td><td>Raises risk to High, feeds Microsoft ML</td></tr>
+            <tr><td><strong>Confirm user safe</strong></td><td>Marks as safe, ignored in future scoring</td></tr>
+            <tr><td><strong>Dismiss user risk</strong></td><td>Sets risk to none (no learning signal)</td></tr>
+            <tr><td><strong>Reset password / block sign-in</strong></td><td>Forces secure reset / stops the account</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — leaked credentials need PHS</p>
+        <p>The <strong>leaked credentials</strong> risk detection only works when <strong>Password Hash Synchronization</strong> is enabled (Microsoft must hold a hash to compare). With pure PTA/federation, that specific detection won't fire. <em>Confirm compromised</em> vs <em>Confirm safe</em> also train the risk engine — <em>Dismiss</em> does not.</p>
+      </div>
+
+      <h3 id="ca-plan">Planning Conditional Access</h3>
+      <p>Conditional Access (CA) is the <strong>"if-then" policy engine</strong>: <em>if</em> these signals are present, <em>then</em> enforce these controls. Requires <strong>Entra ID P1</strong>.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  S1[User / group] --> AS{Assignments}
+  S2[Target resource / app] --> AS
+  S3[Network / location] --> AS
+  S4[Device platform &amp; state] --> AS
+  S5[Sign-in risk / user risk] --> AS
+  S6[Client app] --> AS
+  AS --> AC{Access controls}
+  AC -->|Block| X[Access denied]
+  AC -->|Grant w/ conditions| G[Require MFA · compliant device ·<br/>Hybrid join · app protection · ToU]
+  AC -->|Session| Z[App-enforced · CAE · sign-in frequency]
+        </div>
+        <div class="mm-cap">CA evaluates Assignments (signals) then applies Access controls (grant/block/session).</div>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Block always wins</p>
+        <p>If multiple CA policies apply, <strong>an explicit Block beats any Grant</strong>. All <em>grant</em> requirements in a policy must be met. Always exclude <strong>break-glass / emergency access</strong> accounts from CA policies (and from MFA enforcement) to avoid lock-out.</p>
+      </div>
+
+      <h3 id="ca-implement">Implementing Conditional Access policies</h3>
+      <p><strong>Assignments</strong> (the "if"): Users/groups (incl. guests, directory roles), target resources (cloud apps, user actions like register security info, auth context), conditions (locations/named locations, device platforms, client apps, sign-in/user risk, filter for devices).</p>
+      <p><strong>Access controls</strong> (the "then"):</p>
+      <ul>
+        <li><strong>Grant</strong>: Block, or Grant with — require MFA, require compliant device (Intune), require Hybrid Entra joined device, require approved client app / app protection policy, require password change, require Terms of Use. Combine with AND/OR ("require all" / "require one").</li>
+        <li><strong>Session</strong>: app-enforced restrictions, Conditional Access App Control (Defender for Cloud Apps), <strong>sign-in frequency</strong>, persistent browser session, <strong>Continuous Access Evaluation (CAE)</strong>, token protection.</li>
+      </ul>
+      <div class="callout tip">
+        <p class="ct-title">Report-only mode &amp; What If</p>
+        <p>Deploy new policies in <strong>Report-only</strong> mode first to see impact in sign-in logs without enforcing. Use the <strong>What If</strong> tool to simulate which policies would apply to a given user/app/condition. Templates are available for common scenarios.</p>
+      </div>
+      <p><strong>Security defaults</strong> (free) give a baseline (MFA for admins, block legacy auth). You <strong>cannot use CA policies while Security defaults are enabled</strong> — disable defaults first. CA is the granular, recommended approach for P1+.</p>
+
+      <h3 id="ca-mfa">MFA via Conditional Access</h3>
+      <ul>
+        <li>Preferred way to require MFA: a CA policy granting access only with <em>Require multifactor authentication</em>, targeted at users/apps/conditions.</li>
+        <li><strong>Authentication strengths</strong> let a CA policy demand a <em>specific</em> method class — e.g. "phishing-resistant MFA" (FIDO2/CBA/Windows Hello) for admins.</li>
+        <li>Legacy per-user MFA (enabled/enforced state) still exists but is being deprecated in favour of CA-driven MFA.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — trusted locations &amp; named locations</p>
+        <p>Define <strong>Named locations</strong> (IP ranges or countries) and mark trusted ones to <em>reduce</em> friction (e.g. no MFA from HQ) — but for security questions, conditions like "require MFA <strong>except</strong> trusted locations" are common. Country/region locations can also <em>block</em> high-risk geographies.</p>
+      </div>
+
+      <h3 id="ca-baseline">Recommended Conditional Access baseline</h3>
+      <p>Microsoft's "secure foundation" set of policies — recognise these scenarios on the exam:</p>
+      <div class="table-wrap">
+        <table class="tbl t-purple">
+          <thead><tr><th>Policy</th><th>Target → Control</th></tr></thead>
+          <tbody>
+            <tr><td>Require MFA for admins</td><td>Directory roles → Require MFA (or phishing-resistant strength)</td></tr>
+            <tr><td>Require MFA for all users</td><td>All users → Require MFA</td></tr>
+            <tr><td>Block legacy authentication</td><td>Client apps = legacy → <strong>Block</strong></td></tr>
+            <tr><td>Require MFA for risky sign-ins</td><td>Sign-in risk = Medium+ → Require MFA (P2)</td></tr>
+            <tr><td>Require secure password change for risky users</td><td>User risk = High → Require password change + MFA (P2)</td></tr>
+            <tr><td>Require compliant / Hybrid-joined device</td><td>All users → Grant: compliant device OR Hybrid join</td></tr>
+            <tr><td>Require MFA to register security info</td><td>User action = register security info → Require MFA</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p class="ct-title">Authentication strengths</p>
+        <p>Three built-in strengths — <strong>MFA</strong>, <strong>Passwordless MFA</strong>, and <strong>Phishing-resistant MFA</strong> (FIDO2 / Windows Hello / CBA) — plus custom strengths. A CA policy grant of "require authentication strength" enforces a <em>specific method class</em>, which is stronger than the generic "require MFA".</p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="domain-1-tenant.html"><div class="pg-dir">← Previous</div><div class="pg-title">Domain 1 · Tenant</div></a>
+        <a class="next" href="domain-3-defender.html"><div class="pg-dir">Next →</div><div class="pg-title">Domain 3 · Defender XDR</div></a>
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

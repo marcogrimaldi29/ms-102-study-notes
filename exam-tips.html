@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Tips &amp; High-Yield Caveats — MS-102</title>
+  <meta name="description" content="High-yield MS-102 exam caveats: licensing edition map (Free/P1/P2/E3/E5), 'which tool' decision tables, conflict-resolution rules, PowerShell module guidance, and question-format strategy.">
+  <meta name="author" content="Marco Grimaldi">
+  <link rel="canonical" href="https://marcogrimaldi29.com/ms-102-study-notes/exam-tips.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0078d4">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="MS-102 Study Notes">
+  <meta property="og:title" content="MS-102 Exam Tips and High-Yield Caveats">
+  <meta property="og:description" content="Licensing edition map, which-tool decision tables, conflict-resolution rules, PowerShell guidance and question-format strategy for MS-102.">
+  <meta property="og:url" content="https://marcogrimaldi29.com/ms-102-study-notes/exam-tips.html">
+  <meta property="og:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MS-102 Exam Tips and High-Yield Caveats">
+  <meta name="twitter:description" content="Licensing map, which-tool tables, conflict-resolution rules and question-format strategy for MS-102.">
+  <meta name="twitter:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"MS-102 Exam Tips and High-Yield Caveats","description":"Licensing edition map, which-tool decision tables, conflict-resolution rules, PowerShell guidance and question-format strategy for MS-102.","inLanguage":"en","url":"https://marcogrimaldi29.com/ms-102-study-notes/exam-tips.html","author":{"@type":"Person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/"},"isPartOf":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"MS-102 Study Notes","item":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"ListItem","position":2,"name":"Exam Tips","item":"https://marcogrimaldi29.com/ms-102-study-notes/exam-tips.html"}]}]}
+  </script>
+  <link rel="icon" href="assets/images/site-mark-no-bg.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+</head>
+<body data-page="tips">
+  <div class="layout" style="--accent:var(--ms-amber)">
+
+    <aside class="toc"><h4>On this page</h4><nav id="toc-list"></nav></aside>
+
+    <main class="content">
+      <div class="page-head" style="--accent:#b8860b">
+        <div class="kicker">Final review</div>
+        <h1>Exam tips &amp; high-yield caveats</h1>
+        <p>The traps, licence boundaries and "which tool" distinctions MS-102 loves to test. Skim this the night before — it stitches the four domains into the decisions the exam actually asks you to make.</p>
+      </div>
+
+      <div class="callout warn">
+        <p class="ct-title">Always verify</p>
+        <p>Microsoft renames and re-licenses products frequently (Azure AD → Entra ID, M365 Defender → Defender XDR, Compliance center → Purview). These caveats reflect the current GA picture — <strong>confirm against the official docs</strong> before relying on any single fact.</p>
+      </div>
+
+      <!-- ===================== -->
+      <h2 id="licensing">The licensing map — the #1 tested distinction</h2>
+      <p>Countless questions resolve to "what licence is required?". Burn this in:</p>
+      <div class="table-wrap">
+        <table class="tbl t-slate">
+          <thead><tr><th>Capability</th><th>Minimum licence</th></tr></thead>
+          <tbody>
+            <tr><td>Security defaults, basic MFA, SSPR for cloud users (password change)</td><td><span class="pill p-green">Free</span> Entra ID Free</td></tr>
+            <tr><td>Conditional Access policies</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td>SSPR password <strong>writeback</strong> to on-prem AD</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td>Dynamic group membership</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td>Group-based licensing</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td>Administrative units</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td>Entra Connect Health monitoring</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td>On-prem Password Protection (enforce)</td><td><span class="pill p-blue">P1</span></td></tr>
+            <tr><td><strong>Identity Protection</strong> (risk policies, leaked creds)</td><td><span class="pill p-purple">P2</span></td></tr>
+            <tr><td><strong>Privileged Identity Management (PIM)</strong></td><td><span class="pill p-purple">P2</span></td></tr>
+            <tr><td>Access reviews, Entitlement management</td><td><span class="pill p-purple">P2</span> / Entra ID Governance</td></tr>
+            <tr><td>Defender for Office 365 (Safe Links/Attachments)</td><td><span class="pill p-amber">Defender O365 P1</span></td></tr>
+            <tr><td>Threat Explorer, Attack Simulation, AIR</td><td><span class="pill p-amber">Defender O365 P2 / E5</span></td></tr>
+            <tr><td>Auto-labeling, Endpoint DLP, records mgmt, EDM/trainable classifiers, Insider Risk</td><td><span class="pill p-red">M365 E5 / E5 Compliance</span></td></tr>
+            <tr><td>Manual sensitivity/retention labels, baseline DLP, OME</td><td><span class="pill p-blue">M365 E3</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Rule of thumb</p>
+        <p>If it involves <strong>risk or just-in-time privilege</strong> → <strong>P2</strong>. If it involves <strong>conditional access, dynamic/automation, hybrid writeback, or scoped admin</strong> → <strong>P1</strong>. If it's <strong>automatic</strong> classification/DLP on the endpoint → <strong>E5</strong>.</p>
+      </div>
+
+      <!-- ===================== -->
+      <h2 id="which-tool">"Which tool / which feature?" decision table</h2>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>The requirement says…</th><th>Answer</th></tr></thead>
+          <tbody>
+            <tr><td>Current outages affecting users right now</td><td><strong>Service health</strong></td></tr>
+            <tr><td>Upcoming feature changes &amp; required actions</td><td><strong>Message center</strong></td></tr>
+            <tr><td>Clean up duplicate UPN/proxyAddresses before sync</td><td><strong>IdFix</strong></td></tr>
+            <tr><td>Sync multiple <em>disconnected</em> forests, lightweight</td><td><strong>Entra Cloud Sync</strong></td></tr>
+            <tr><td>Sync devices / Hybrid Join / Exchange hybrid writeback</td><td><strong>Entra Connect Sync</strong></td></tr>
+            <tr><td>Just-in-time elevation with approval for admin roles</td><td><strong>PIM</strong></td></tr>
+            <tr><td>Scope a helpdesk admin to one department only</td><td><strong>Administrative unit</strong></td></tr>
+            <tr><td>Block sign-in from risky countries / require MFA off-network</td><td><strong>Conditional Access</strong></td></tr>
+            <tr><td>Auto-remediate compromised identities (leaked creds)</td><td><strong>Identity Protection</strong> (+ CA risk policy)</td></tr>
+            <tr><td>Detonate attachments in a sandbox before delivery</td><td><strong>Safe Attachments</strong></td></tr>
+            <tr><td>Protect against URLs weaponised after delivery</td><td><strong>Safe Links</strong> + <strong>ZAP</strong></td></tr>
+            <tr><td>Find unsanctioned SaaS (shadow IT) from traffic logs</td><td><strong>Cloud Discovery</strong> (Defender for Cloud Apps)</td></tr>
+            <tr><td>Block file download on unmanaged device in real time</td><td><strong>Conditional Access App Control / session policy</strong></td></tr>
+            <tr><td>Hunt across email + device + identity with KQL</td><td><strong>Advanced hunting</strong> (Defender XDR)</td></tr>
+            <tr><td>Keep/delete data on a schedule (lifecycle)</td><td><strong>Retention</strong> labels/policies</td></tr>
+            <tr><td>Classify + encrypt + watermark a document</td><td><strong>Sensitivity label</strong></td></tr>
+            <tr><td>Stop USB copy of sensitive files on a laptop</td><td><strong>Endpoint DLP</strong></td></tr>
+            <tr><td>Fast point-in-time restore of mailbox/OneDrive/SharePoint</td><td><strong>Microsoft 365 Backup</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===================== -->
+      <h2 id="conflict-rules">Conflict-resolution rules to memorise</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4 style="margin-top:0">Conditional Access</h4>
+          <p>All policies are evaluated; <strong>explicit Block overrides any Grant</strong>. Within a grant, "require all" = AND, "require one" = OR. Always exclude break-glass accounts.</p>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">Retention (in order)</h4>
+          <p>1) <strong>Retain &gt; delete</strong> · 2) <strong>longest retention wins</strong> · 3) <strong>explicit label &gt; implicit policy</strong> · 4) <strong>shortest deletion wins</strong>.</p>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">Threat policy precedence</h4>
+          <p><strong>Strict preset &gt; Standard preset &gt; custom (by priority number) &gt; Built-in/Default.</strong> Lower priority number = applied first.</p>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">Sensitivity label order</h4>
+          <p>Label <strong>lower in the list = higher sensitivity / priority</strong>. One sensitivity + one retention label can coexist on an item.</p>
+        </div>
+      </div>
+
+      <!-- ===================== -->
+      <h2 id="powershell">PowerShell &amp; tooling gotchas</h2>
+      <ul>
+        <li>Use <strong>Microsoft Graph PowerShell</strong> (<code>Connect-MgGraph</code>, <code>New-MgUser</code>) and the <strong>Microsoft Entra PowerShell</strong> module. The old <strong>MSOnline (<code>Connect-MsolService</code>)</strong> and <strong>AzureAD</strong> modules are <strong>retired</strong> — wrong answers if offered as the modern approach.</li>
+        <li>Force directory sync: <code>Start-ADSyncSyncCycle -PolicyType Delta</code> (incremental) on the Connect server.</li>
+        <li>Exchange Online tasks → <strong>Exchange Online PowerShell V3</strong> module (<code>Connect-ExchangeOnline</code>).</li>
+        <li>Bulk users without scripting → <strong>CSV import</strong> in the M365 admin center.</li>
+      </ul>
+
+      <!-- ===================== -->
+      <h2 id="staged-rollout">"Test before enforce" patterns</h2>
+      <p>Several features share a pilot-then-enforce model — recognise which mode goes with which feature:</p>
+      <div class="table-wrap">
+        <table class="tbl t-slate">
+          <thead><tr><th>Feature</th><th>Pilot / test mode</th></tr></thead>
+          <tbody>
+            <tr><td>Conditional Access</td><td><strong>Report-only</strong> mode + <strong>What If</strong> tool</td></tr>
+            <tr><td>DLP policy</td><td><strong>Simulation / test mode</strong> (with or without policy tips)</td></tr>
+            <tr><td>ASR rules (Defender for Endpoint)</td><td><strong>Audit</strong> mode before <strong>Block</strong></td></tr>
+            <tr><td>On-prem Password Protection</td><td><strong>Audit</strong> mode before <strong>Enforce</strong></td></tr>
+            <tr><td>Federation → managed auth migration</td><td><strong>Staged rollout</strong></td></tr>
+            <tr><td>Attack Simulation Training</td><td>Benign simulated phishing + auto-assigned training</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===================== -->
+      <h2 id="naming">Old name → new name (don't get tricked)</h2>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>You may still see…</th><th>Current name</th></tr></thead>
+          <tbody>
+            <tr><td>Azure Active Directory (Azure AD)</td><td><strong>Microsoft Entra ID</strong></td></tr>
+            <tr><td>Azure AD Connect / AAD Connect cloud sync</td><td><strong>Microsoft Entra Connect Sync / Cloud Sync</strong></td></tr>
+            <tr><td>Microsoft 365 Defender / Microsoft Threat Protection</td><td><strong>Microsoft Defender XDR</strong></td></tr>
+            <tr><td>Office 365 ATP</td><td><strong>Microsoft Defender for Office 365</strong></td></tr>
+            <tr><td>Microsoft Cloud App Security (MCAS)</td><td><strong>Microsoft Defender for Cloud Apps</strong></td></tr>
+            <tr><td>Microsoft 365 compliance center</td><td><strong>Microsoft Purview portal</strong></td></tr>
+            <tr><td>AIP / Azure Information Protection labels</td><td><strong>Purview sensitivity labels</strong></td></tr>
+            <tr><td>Office Message Encryption (OME)</td><td><strong>Microsoft Purview Message Encryption</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===================== -->
+      <h2 id="format">Question-format strategy</h2>
+      <dl class="terms">
+        <dt>Case studies</dt>
+        <dd>Read the <strong>requirements &amp; existing environment</strong> first, then the questions. Answers must satisfy <em>all</em> stated constraints (cost, "minimise admin effort", "least privilege"). You usually can't return to a case study after leaving it.</dd>
+        <dt>Build list / drag-and-drop ordering</dt>
+        <dd>Order matters — e.g. <em>add domain → verify TXT → configure MX/CNAME</em>; or <em>create label → publish policy → apply</em>. Eliminate impossible first steps.</dd>
+        <dt>"Yes/No" repeated-scenario sets</dt>
+        <dd>Same setup, 3 variations. Each is independent — a previous "No" doesn't imply the next. Watch the subtle wording change.</dd>
+        <dt>Hotspot / dropdowns</dt>
+        <dd>Each dropdown is scored independently. Don't let one uncertain field shake your confidence on the others.</dd>
+        <dt>"Minimise administrative effort" / "least privilege"</dt>
+        <dd>These phrases steer you to <strong>group-based</strong>, <strong>built-in role</strong>, <strong>preset policy</strong>, or <strong>automatic</strong> answers over manual/custom ones.</dd>
+      </dl>
+
+      <div class="callout tip">
+        <p class="ct-title">Day-before checklist</p>
+        <p>✅ Licence map (Free/P1/P2/E3/E5) ✅ Service health vs Message center ✅ Connect Sync vs Cloud Sync ✅ CA block-wins + report-only ✅ Retention conflict order ✅ Sensitivity vs retention label ✅ Safe Links vs Safe Attachments ✅ Cloud Discovery vs connector vs session control ✅ Graph PowerShell (not MSOnline/AzureAD) ✅ Endpoint DLP needs onboarding.</p>
+      </div>
+
+      <div class="callout note">
+        <p class="ct-title">Take the free practice assessment</p>
+        <p>Microsoft offers an official <a href="https://learn.microsoft.com/en-us/credentials/certifications/exams/ms-102/practice/assessment" target="_blank" rel="noopener">MS-102 practice assessment</a> — use it to find weak areas, then revisit the matching domain page here.</p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="domain-4-purview.html"><div class="pg-dir">← Previous</div><div class="pg-title">Domain 4 · Purview</div></a>
+        <a class="next" href="index.html"><div class="pg-dir">Back to →</div><div class="pg-title">Home &amp; overview</div></a>
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
