@@ -24,14 +24,16 @@ Microsoft frequently renames, re-scopes, and re-licenses its products (e.g. *Azu
 
 The site is aligned to the official **MS-102 "Skills Measured"** (version effective **April 28, 2026**) and covers the topics in the **MS-102T00** instructor-led course.
 
-| Page | Domain | Exam weight |
+Each page lives in its own folder so it gets a clean, extensionless URL (`/domain-1-tenant/` instead of `domain-1-tenant.html`).
+
+| URL | Domain | Exam weight |
 |------|--------|-------------|
-| `index.html` | Home, exam facts & skills-at-a-glance | — |
-| `domain-1-tenant.html` | Deploy and manage a Microsoft 365 tenant | 25–30% |
-| `domain-2-identity.html` | Implement and manage Microsoft Entra identity and access | 25–30% |
-| `domain-3-defender.html` | Manage security and threats using Microsoft Defender XDR | 30–35% |
-| `domain-4-purview.html` | Manage compliance using Microsoft Purview | 10–15% |
-| `exam-tips.html` | High-yield caveats, licensing map & question strategy | — |
+| `/` (`index.html`) | Home, exam facts & skills-at-a-glance | — |
+| `/domain-1-tenant/` | Deploy and manage a Microsoft 365 tenant | 25–30% |
+| `/domain-2-identity/` | Implement and manage Microsoft Entra identity and access | 25–30% |
+| `/domain-3-defender/` | Manage security and threats using Microsoft Defender XDR | 30–35% |
+| `/domain-4-purview/` | Manage compliance using Microsoft Purview | 10–15% |
+| `/exam-tips/` | High-yield caveats, licensing map & question strategy | — |
 
 ### Features
 
@@ -45,34 +47,34 @@ The site is aligned to the official **MS-102 "Skills Measured"** (version effect
 
 ```
 .
-├── index.html                  # Landing / overview
-├── domain-1-tenant.html
-├── domain-2-identity.html
-├── domain-3-defender.html
-├── domain-4-purview.html
-├── exam-tips.html
+├── index.html                  # Landing / overview (site root)
+├── domain-1-tenant/index.html  # → /domain-1-tenant/
+├── domain-2-identity/index.html
+├── domain-3-defender/index.html
+├── domain-4-purview/index.html
+├── exam-tips/index.html
 ├── assets/
 │   ├── css/style.css           # Design system
 │   ├── js/main.js              # Shared header/footer, TOC, theme, Mermaid, progress bars
 │   └── images/
 │       ├── site-mark-no-bg.png # Site logo
 │       └── marcogrimaldi29.png # Author photo
+├── sitemap.xml
 └── README.md
 ```
 
-The shared header and footer are injected by `assets/js/main.js`, so navigation stays consistent across pages — there is no build step.
+The shared header and footer are injected by `assets/js/main.js`, which derives its path prefix from its own `src` so links and assets resolve correctly from the root **and** from each page folder — there is no build step.
 
 ---
 
 ## 🚀 Publishing with GitHub Pages
 
 1. Push this repository to GitHub.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment → Source**, choose **Deploy from a branch**.
-4. Select the `main` branch and the `/ (root)` folder, then **Save**.
-5. Your site goes live at `https://<your-username>.github.io/<repo-name>/`.
+2. Go to **Settings → Pages → Build and deployment → Source**, and choose **GitHub Actions**.
+3. The included [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) builds and deploys on every push to `main` (and injects the Umami ID from the secret — see Analytics below).
+4. Your site goes live at `https://<your-username>.github.io/<repo-name>/`, with clean directory URLs like `/<repo-name>/domain-1-tenant/`.
 
-No framework or build pipeline is required — it is plain static files.
+> Pages can also be served with **Deploy from a branch** (`main` / root) — the folder-per-page structure gives the same clean URLs — but the Umami ID injection only runs via the Actions workflow above.
 
 ---
 
@@ -83,7 +85,7 @@ The site is configured to be found on the web and rank well:
 - **Canonical URLs** on every page point to the production address `https://marcogrimaldi29.com/ms-102-study-notes/…`, so the custom-domain copy is treated as primary and the GitHub Pages (`*.github.io`) copy won't compete as duplicate content.
 - **Open Graph + Twitter Card** meta tags give rich link previews on LinkedIn, X/Twitter, Slack, etc.
 - **JSON-LD structured data** — `WebSite`, `Person`, and `Course` schema on the home page; `TechArticle` + `BreadcrumbList` on each study page — eligible for Google rich results.
-- **`sitemap.xml`** lists all pages; **`robots.txt`** allows all crawlers and references the sitemap.
+- **`sitemap.xml`** lists all pages. (No `robots.txt` lives here — it's only authoritative at the domain root, `marcogrimaldi29.com/robots.txt`, which is served from the main hub repo and references this sitemap.)
 - Descriptive `<title>`, `meta description`, semantic headings, and `theme-color` on every page.
 
 ### ⚠️ Two manual steps so search engines actually find it
