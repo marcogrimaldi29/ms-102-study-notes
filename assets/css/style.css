@@ -327,8 +327,10 @@ ol.steps > li::before { counter-increment: step; content: counter(step); positio
   background: color-mix(in srgb, var(--ms-green) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--ms-green) 38%, transparent);
   padding: 3px 10px; border-radius: 999px; margin-bottom: 7px; }
-.contrib-note { margin-top: 12px; font-size: .86rem; color: var(--text-muted); line-height: 1.5; }
-.contrib-note strong { color: var(--text-soft); }
+.contrib-note { background: color-mix(in srgb, var(--ms-blue) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--ms-blue) 40%, var(--border)); border-radius: var(--radius);
+  padding: 14px 16px; margin-top: 12px; font-size: .9rem; color: var(--text-soft); line-height: 1.5; }
+.contrib-note strong { color: var(--text); }
 .footer-inner a { color: var(--text-soft); display: block; padding: 3px 0; font-size: .92rem; }
 .footer-inner a:hover { color: var(--ms-blue); }
 .author-card { display: flex; gap: 14px; align-items: center; }
