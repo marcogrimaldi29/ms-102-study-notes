@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain 4 · Compliance with Microsoft Purview — MS-102</title>
+  <meta name="description" content="MS-102 Domain 4 study notes: sensitive information types, retention labels & policies, sensitivity labels, Content & Activity explorer, and Data Loss Prevention (DLP) including Endpoint DLP.">
+  <meta name="author" content="Marco Grimaldi">
+  <link rel="canonical" href="https://marcogrimaldi29.com/ms-102-study-notes/domain-4-purview.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0078d4">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="MS-102 Study Notes">
+  <meta property="og:title" content="MS-102 Domain 4 · Compliance with Microsoft Purview">
+  <meta property="og:description" content="Sensitive information types, retention, sensitivity labels, Content and Activity explorer, and Data Loss Prevention including Endpoint DLP.">
+  <meta property="og:url" content="https://marcogrimaldi29.com/ms-102-study-notes/domain-4-purview.html">
+  <meta property="og:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MS-102 Domain 4 · Compliance with Microsoft Purview">
+  <meta name="twitter:description" content="Sensitive info types, retention, sensitivity labels, Content and Activity explorer, and DLP including Endpoint DLP.">
+  <meta name="twitter:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"MS-102 Domain 4 · Compliance with Microsoft Purview","description":"Sensitive information types, retention, sensitivity labels, Content and Activity explorer, and Data Loss Prevention including Endpoint DLP.","inLanguage":"en","url":"https://marcogrimaldi29.com/ms-102-study-notes/domain-4-purview.html","author":{"@type":"Person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/"},"isPartOf":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"MS-102 Study Notes","item":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"ListItem","position":2,"name":"Domain 4 · Purview","item":"https://marcogrimaldi29.com/ms-102-study-notes/domain-4-purview.html"}]}]}
+  </script>
+  <link rel="icon" href="assets/images/site-mark-no-bg.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+</head>
+<body data-page="purview">
+  <div class="layout" style="--accent:var(--d4)">
+
+    <aside class="toc"><h4>On this page</h4><nav id="toc-list"></nav></aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div class="kicker">Domain 4 · 10–15%</div>
+        <h1>Manage compliance using Microsoft Purview</h1>
+        <p>Classifying data, governing its lifecycle with retention, protecting it with sensitivity labels and encryption, and preventing it from leaking with Data Loss Prevention across every Microsoft 365 workload.</p>
+      </div>
+
+      <div class="card">
+        <strong>Two objectives:</strong>
+        <ul style="margin-bottom:0">
+          <li><a href="#info-protection">Information protection &amp; data lifecycle</a> — SITs, retention, sensitivity labels, explorers</li>
+          <li><a href="#dlp">Data Loss Prevention (DLP)</a> — workload policies, Endpoint DLP, alerts &amp; reports</li>
+        </ul>
+        <p style="margin:10px 0 0">Everything here lives in the <strong>Microsoft Purview portal</strong> (purview.microsoft.com). Many features require <strong>Microsoft 365 E5 / E5 Compliance</strong>; baseline labels &amp; manual DLP are in E3.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="info-protection"><span class="num">4.1</span> Information protection &amp; data lifecycle</h2>
+      <p>Microsoft frames information protection as a four-stage cycle — recognise which feature serves which stage:</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  K[Know your data<br/>SITs · classifiers · Content explorer] --> P[Protect your data<br/>sensitivity labels · encryption · DLP]
+  P --> G[Govern your data<br/>retention · records · disposition]
+  G --> M[Monitor<br/>Activity explorer · alerts · reports]
+  M --> K
+        </div>
+        <div class="mm-cap">Know → Protect → Govern → Monitor: the Microsoft Purview information-protection lifecycle.</div>
+      </div>
+
+      <h3 id="data-classification">Data classification — how Purview finds sensitive data</h3>
+      <div class="table-wrap">
+        <table class="tbl t-teal">
+          <thead><tr><th>Classifier</th><th>How it matches</th><th>Use for</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sensitive Info Type (SIT)</strong></td><td>Pattern: keywords, <strong>regex</strong>, checksums, proximity, confidence level</td><td>Credit cards, SSNs, passport &amp; tax IDs</td></tr>
+            <tr><td><strong>Trainable classifier</strong></td><td>Machine-learned from sample content</td><td>Categories like contracts, resumes, source code</td></tr>
+            <tr><td><strong>EDM (Exact Data Match)</strong></td><td>Matches against a hashed database of exact values</td><td>Your own customer/employee records</td></tr>
+            <tr><td><strong>Keyword / keyword list / dictionary</strong></td><td>Exact term matching</td><td>Project code words, product names</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Sensitive information types</strong> ship with 200+ built-ins. Build a <strong>custom SIT</strong> from keywords, a keyword list, a regular expression, plus <strong>supporting evidence</strong> within a character proximity and a <strong>confidence level</strong> (low/medium/high) and <strong>instance count</strong>.</p>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — confidence &amp; instance count tuning</p>
+        <p>To reduce false positives, <em>raise the confidence level</em> and require supporting keywords nearby. To catch bulk leaks, set a <strong>min/max instance count</strong> (e.g. "10 to 500 credit card numbers"). These knobs appear in both SIT and DLP questions.</p>
+      </div>
+
+      <h4>Exact Data Match (EDM) — the workflow</h4>
+      <ol class="steps">
+        <li><strong>Define a schema</strong> (the columns of your sensitive table, e.g. SSN, account #) and choose which fields are searchable.</li>
+        <li><strong>Hash &amp; upload</strong> the sensitive data file with the EDM Upload Agent — only salted hashes leave your premises (the actual values never reach Microsoft).</li>
+        <li><strong>Create an EDM SIT</strong> referencing the schema, then use it in DLP/auto-labeling like any SIT.</li>
+      </ol>
+      <div class="callout note">
+        <p class="ct-title">When to choose which classifier</p>
+        <p><strong>SIT</strong> = well-known patterns (card numbers). <strong>EDM</strong> = match <em>your exact</em> records with very low false positives at scale. <strong>Trainable classifier</strong> = categorise by <em>meaning</em> where there's no fixed pattern. Trainable classifiers come <strong>pre-trained</strong> (e.g. Resumes, Source code, Harassment, Profanity) or you build a <strong>custom</strong> one by feeding 50–500 sample documents (seed) then test.</p>
+      </div>
+
+      <h3 id="retention">Retention labels &amp; retention policies (data lifecycle)</h3>
+      <p>Retention answers <em>"keep this for X, then delete (or review)"</em> and <em>"don't delete before X"</em>.</p>
+      <div class="table-wrap">
+        <table class="tbl t-teal">
+          <thead><tr><th></th><th>Retention policy</th><th>Retention label</th></tr></thead>
+          <tbody>
+            <tr><td>Scope</td><td>Applied <strong>at container level</strong> (whole mailbox, site, Teams, etc.)</td><td>Applied <strong>at item level</strong> (specific doc/email)</td></tr>
+            <tr><td>Applied how</td><td>Auto, location-wide</td><td>Manually by users, auto (by SIT/keyword/trainable), or default for a library</td></tr>
+            <tr><td>Extra power</td><td>Broad, simple coverage</td><td><strong>Records management</strong>: mark as <em>record</em> / <em>regulatory record</em>, disposition review, event-based retention</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — principles of retention (conflict resolution)</p>
+        <p>When multiple retention settings apply, the outcome follows this order: <strong>1) Retention wins over deletion</strong> (keep beats delete) → <strong>2) Longest retention period wins</strong> → <strong>3) Explicit (label) wins over implicit (policy)</strong> → <strong>4) Shortest deletion period wins</strong>. Memorise this — it's a classic exam item.</p>
+      </div>
+      <ul>
+        <li>A <strong>retention label policy</strong> publishes labels to locations so users can apply them; an <strong>auto-apply</strong> label policy applies them based on conditions (SITs, keywords, trainable classifiers).</li>
+        <li>Retained content in SharePoint/OneDrive is kept in the <strong>Preservation Hold library</strong>; in Exchange the <strong>Recoverable Items</strong> folder.</li>
+        <li><strong>Disposition review</strong> routes items to reviewers at end of retention instead of auto-deleting; reviewers can extend, relabel, or approve permanent deletion.</li>
+        <li>Retention period can start from <em>when created / last modified / labeled</em>, or from an <strong>event</strong> (event-based retention — e.g. employee leaves, contract expires).</li>
+      </ul>
+      <div class="callout tip">
+        <p class="ct-title">Adaptive vs static policy scopes</p>
+        <p><strong>Static scope</strong> = you manually pick the locations/sites. <strong>Adaptive scope</strong> = a query on user/group/site attributes (e.g. department = Legal) that <em>auto-updates</em> membership as attributes change. Prefer adaptive for large or changing orgs so the policy stays current without edits.</p>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — records vs regulatory records</p>
+        <p>A retention label can mark an item as a <strong>record</strong> (can't be edited/deleted, but a privileged admin can unlock it) or a <strong>regulatory record</strong> (locked — label can never be removed or downgraded, <em>even by an admin</em>). Regulatory records are irreversible — a favourite distractor.</p>
+      </div>
+
+      <h3 id="sensitivity-labels">Sensitivity labels &amp; label policies</h3>
+      <p>Sensitivity labels <strong>classify and protect</strong> content/containers. A label can apply: <strong>encryption</strong>, content marking (header/footer/watermark), and access/scope controls. Labels are <strong>persistent</strong> and travel with the file.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  C[Create labels<br/>Public · Internal · Confidential · Highly Confidential] --> S[Set protection:<br/>encryption · marking · container settings]
+  S --> P[Publish via label policy<br/>to users / groups]
+  P --> A{Apply}
+  A -->|Manual| U[User picks label]
+  A -->|Auto / recommended| AI[Match SIT / classifier]
+  A -->|Default| D[Default label on docs/sites]
+        </div>
+        <div class="mm-cap">Labels are created, optionally protect content, then published to users via a label policy.</div>
+      </div>
+      <ul>
+        <li>Label <strong>order = priority</strong>: the label lowest in the list is the most restrictive/highest sensitivity.</li>
+        <li>Labels can be scoped to <strong>files &amp; emails</strong>, <strong>groups &amp; sites</strong> (container protection — privacy, external sharing, unmanaged-device access for Teams/SharePoint/M365 Groups), <strong>schematized data assets</strong>, and <strong>Power BI</strong>.</li>
+        <li><strong>Auto-labeling</strong>: client-side (recommended/automatic in Office apps, needs E5) and <strong>service-side</strong> (auto-labeling policies on data at rest in SharePoint/OneDrive/Exchange).</li>
+        <li><strong>Microsoft Purview Message Encryption (OME)</strong> can be applied via a label or a mail flow rule for encrypted/rights-protected email to internal &amp; external recipients.</li>
+      </ul>
+      <h4>Encryption &amp; access control on a label</h4>
+      <ul>
+        <li>Encryption can <strong>assign permissions now</strong> (named users/groups with rights like View, Edit, Copy, Print — Co-Author / Co-Owner / Viewer presets) <em>or</em> <strong>let users assign permissions</strong> (Do Not Forward, encrypt-only).</li>
+        <li>Encryption is enforced by <strong>Azure Rights Management</strong> in the Microsoft Purview/Entra back end; rights travel with the file everywhere.</li>
+        <li><strong>Double Key Encryption (DKE)</strong> — for the most sensitive data, a customer-held key + a Microsoft key are both required (Microsoft cannot decrypt).</li>
+        <li>Encrypted documents support <strong>co-authoring &amp; AutoSave</strong> when "Enable co-authoring for labeled files" is on tenant-wide.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — sensitivity vs retention labels</p>
+        <p><strong>Sensitivity label</strong> = classify + <em>protect</em> (encrypt, mark, restrict). <strong>Retention label</strong> = govern <em>lifecycle</em> (keep/delete). An item can have <strong>one sensitivity label and one retention label</strong> at the same time. Don't mix them up.</p>
+      </div>
+
+      <h3 id="explorers">Monitor label usage — Content explorer, Activity explorer, reports</h3>
+      <div class="table-wrap">
+        <table class="tbl t-teal">
+          <thead><tr><th>Tool</th><th>Shows</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Content explorer</strong></td><td><em>Current snapshot</em> — where labeled/sensitive items live right now</td><td>"<strong>What</strong> sensitive content do I have and where?"</td></tr>
+            <tr><td><strong>Activity explorer</strong></td><td><em>Historical activities</em> on labeled content (label applied/changed/removed, file actions)</td><td>"<strong>What happened</strong> to labeled content over time?"</td></tr>
+            <tr><td><strong>Label / classifier reports</strong></td><td>Adoption &amp; distribution of labels</td><td>"How widely are labels used?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Permissions</p>
+        <p>Viewing Content explorer needs the <strong>Content Explorer List/Content viewer</strong> roles; Activity explorer needs the relevant data classification reader roles. Least privilege still applies.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="dlp"><span class="num">4.2</span> Data Loss Prevention (DLP)</h2>
+      <p>DLP detects sensitive content (via SITs, sensitivity labels, classifiers) and enforces protective actions when users <em>share or move</em> it.</p>
+
+      <h3 id="dlp-policies">DLP policies across Microsoft 365 workloads</h3>
+      <p>A DLP policy = <strong>locations</strong> + <strong>rules</strong> (conditions → actions). Supported locations now include:</p>
+      <ul>
+        <li><strong>Exchange Online</strong> email, <strong>SharePoint Online</strong>, <strong>OneDrive</strong>, <strong>Teams</strong> chat &amp; channel messages, <strong>Devices (Endpoint DLP)</strong>, <strong>Power BI</strong>, <strong>on-prem repositories</strong>, and <strong>Microsoft 365 Copilot</strong> (restrict labeled content from being summarised/processed).</li>
+      </ul>
+      <div class="table-wrap">
+        <table class="tbl t-teal">
+          <thead><tr><th>Rule element</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Conditions</strong></td><td>Content contains SIT / sensitivity label / classifier; shared with people outside the org; instance count thresholds</td></tr>
+            <tr><td><strong>Actions</strong></td><td>Block access / block only external; restrict sharing; encrypt; restrict access on device</td></tr>
+            <tr><td><strong>User notifications</strong></td><td>Policy tips in Outlook/Office/Teams to educate the user inline</td></tr>
+            <tr><td><strong>User overrides</strong></td><td>Allow override with business justification or false-positive report (configurable)</td></tr>
+            <tr><td><strong>Incident reports</strong></td><td>Email alert to admins, severity, aggregated alerts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — policy tip + override behaviour</p>
+        <p>"Policy tips" require <strong>user notifications</strong> enabled. If a question wants users blocked but able to proceed with a reason, enable <strong>allow overrides with justification</strong>. To hard-stop, disable overrides. Test new policies in <strong>simulation/test mode (with or without tips)</strong> before turning on enforcement — same pattern as CA report-only.</p>
+      </div>
+      <p><strong>Per-workload behaviour to remember:</strong></p>
+      <div class="table-wrap">
+        <table class="tbl t-teal">
+          <thead><tr><th>Workload</th><th>What DLP can do</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Exchange Online</strong></td><td>Block/encrypt outbound mail, policy tips in Outlook, override with justification</td></tr>
+            <tr><td><strong>SharePoint / OneDrive</strong></td><td>Block external/everyone sharing of matching files; auto-remove access</td></tr>
+            <tr><td><strong>Teams chat &amp; channels</strong></td><td>Block sharing sensitive messages; requires the content to be sent (not just typed)</td></tr>
+            <tr><td><strong>Endpoint (devices)</strong></td><td>Control copy/print/USB/upload (see below)</td></tr>
+            <tr><td><strong>Microsoft 365 Copilot</strong></td><td>Exclude content with a chosen sensitivity label from being processed/summarised by Copilot</td></tr>
+            <tr><td><strong>Power BI / on-prem (scanner)</strong></td><td>Detect &amp; alert on sensitive datasets / repositories</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Policy priority</p>
+        <p>DLP policies have a <strong>priority order</strong> (0 = highest). When content matches multiple policies, the most restrictive <em>action</em> across matching rules is enforced; rule processing within a policy stops at the first matched rule that applies an action, per its priority.</p>
+      </div>
+
+      <h3 id="endpoint-dlp">Endpoint DLP</h3>
+      <p>Extends DLP to <strong>activities on Windows 10/11 &amp; macOS devices</strong> that are <strong>onboarded</strong> (the same onboarding as Defender for Endpoint — Intune or script).</p>
+      <ul>
+        <li>Monitors/controls: <strong>copy to USB / removable media, copy to network share, print, copy to clipboard, upload to (unallowed) browser/cloud, paste, access by unallowed apps, Bluetooth transfer, Remote Desktop copy</strong>.</li>
+        <li>Configure <strong>DLP settings</strong>: allowed/unallowed browsers &amp; apps, restricted/printer/USB device groups, and evidence collection.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Endpoint DLP prerequisites</p>
+        <p>Endpoint DLP requires devices to be <strong>onboarded</strong> (Intune or local script) and works best on Entra-joined/registered Windows. Use <strong>Microsoft Edge</strong> or installed extensions for best browser coverage; "unallowed browsers" can be blocked from accessing sensitive items.</p>
+      </div>
+
+      <h3 id="dlp-alerts">Review &amp; respond to DLP alerts, events &amp; reports</h3>
+      <ul>
+        <li><strong>DLP alerts dashboard</strong> (Purview → Data loss prevention → Alerts): triage by severity, view matched content, the rule hit, and user; set status (Investigating / Resolved / Dismissed).</li>
+        <li><strong>Activity explorer</strong> shows DLP-related activities and policy matches over time.</li>
+        <li><strong>DLP reports</strong>: policy matches, false positives &amp; overrides, incident trends — feed tuning of conditions/confidence to cut noise.</li>
+        <li>Integrated with <strong>Defender XDR alerts</strong> and can flow to <strong>Insider Risk Management</strong> for higher-risk users.</li>
+      </ul>
+
+      <div class="callout tip">
+        <p class="ct-title">Licensing quick map (Purview)</p>
+        <p><strong>E3</strong>: manual sensitivity/retention labels, baseline DLP (Exchange/SP/OneDrive/Teams), message encryption. <strong>E5 / E5 Compliance</strong>: <em>automatic</em> labeling, Endpoint DLP, advanced SITs (EDM/trainable classifiers), records management, Insider Risk, advanced auditing.</p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="domain-3-defender.html"><div class="pg-dir">← Previous</div><div class="pg-title">Domain 3 · Defender XDR</div></a>
+        <a class="next" href="exam-tips.html"><div class="pg-dir">Next →</div><div class="pg-title">Exam tips &amp; caveats</div></a>
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

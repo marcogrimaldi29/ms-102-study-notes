@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MS-102 Study Notes · Microsoft 365 Administrator</title>
+  <meta name="description" content="Comprehensive, exam-focused study notes for the Microsoft MS-102: Microsoft 365 Administrator certification. Aligned to the latest skills measured with progress bars, diagrams, tables and exam caveats.">
+  <meta name="author" content="Marco Grimaldi">
+  <link rel="icon" href="assets/images/site-mark-no-bg.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="canonical" href="https://marcogrimaldi29.com/ms-102-study-notes/">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0078d4">
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MS-102 Study Notes">
+  <meta property="og:title" content="MS-102 Study Notes · Microsoft 365 Administrator">
+  <meta property="og:description" content="Comprehensive, exam-focused study notes for Microsoft MS-102, aligned to the latest skills measured — progress bars, diagrams, tables and exam caveats.">
+  <meta property="og:url" content="https://marcogrimaldi29.com/ms-102-study-notes/">
+  <meta property="og:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MS-102 Study Notes · Microsoft 365 Administrator">
+  <meta name="twitter:description" content="Exam-focused MS-102 study notes aligned to the latest Microsoft skills measured.">
+  <meta name="twitter:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://marcogrimaldi29.com/ms-102-study-notes/#website","url":"https://marcogrimaldi29.com/ms-102-study-notes/","name":"MS-102 Study Notes","description":"Exam-focused study notes for Microsoft MS-102: Microsoft 365 Administrator.","inLanguage":"en","publisher":{"@id":"https://marcogrimaldi29.com/#person"}},{"@type":"Person","@id":"https://marcogrimaldi29.com/#person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/","sameAs":["https://github.com/marcogrimaldi29","https://www.linkedin.com/in/marco-grimaldi29/"]},{"@type":"Course","name":"MS-102: Microsoft 365 Administrator — Study Notes","description":"Free, exam-focused study notes covering the four MS-102 skill domains: Microsoft 365 tenant, Microsoft Entra identity and access, Microsoft Defender XDR security, and Microsoft Purview compliance.","url":"https://marcogrimaldi29.com/ms-102-study-notes/","inLanguage":"en","provider":{"@type":"Person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/"},"teaches":["Deploy and manage a Microsoft 365 tenant","Implement and manage Microsoft Entra identity and access","Manage security and threats using Microsoft Defender XDR","Manage compliance using Microsoft Purview"],"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"PT40H"}}]}
+  </script>
+  <!-- Umami cookieless analytics (replace data-website-id with your own, then uncomment) -->
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+</head>
+<body data-page="home">
+
+  <div class="page-wide">
+
+    <section class="hero">
+      <span class="eyebrow">Microsoft Certification · Exam MS-102</span>
+      <h1>Microsoft 365 Administrator</h1>
+      <p>A complete, exam-focused companion to the official documentation — built around the latest <strong>Skills Measured (effective April 28, 2026)</strong>. Learn the concepts, memorise the caveats, and walk into the exam ready.</p>
+      <div class="hero-meta">
+        <span>⏱ ~120 min</span>
+        <span>✅ Pass mark: 700/1000</span>
+        <span>📚 4 skill domains</span>
+        <span>🎓 Associate → Admin Expert</span>
+      </div>
+    </section>
+
+    <div class="card">
+      <p class="lead" style="margin-top:0">MS-102 validates your ability to deploy and manage a Microsoft 365 tenant, implement identity and access with Microsoft Entra, secure the estate with Microsoft Defender XDR, and govern data with Microsoft Purview. It is the integrating exam that sits across <strong>every</strong> Microsoft 365 workload.</p>
+      <div class="callout note" style="margin-bottom:0">
+        <p class="ct-title">How to use these notes</p>
+        <p>Work through the four domains in order, then drill the <a href="exam-tips.html">Exam Tips &amp; Caveats</a> page before test day. These notes are a <strong>companion</strong> — pair every section with hands-on practice in a Microsoft 365 trial tenant and the official Microsoft Learn modules.</p>
+      </div>
+    </div>
+
+    <h2 class="content" style="border:0;margin-bottom:6px">Skills measured at a glance</h2>
+    <p class="lead" style="margin-top:0">Exam weightings — focus your time accordingly. Defender XDR is the single heaviest area.</p>
+
+    <div class="card">
+      <div class="weight-list">
+        <div class="weight-row" style="--accent:var(--d1)">
+          <div class="wr-top"><span class="wr-name">1 · Deploy and manage a Microsoft 365 tenant</span><span class="wr-pct">25–30%</span></div>
+          <div class="progress"><span data-pct="27"></span></div>
+        </div>
+        <div class="weight-row" style="--accent:var(--d2)">
+          <div class="wr-top"><span class="wr-name">2 · Implement and manage Microsoft Entra identity and access</span><span class="wr-pct">25–30%</span></div>
+          <div class="progress"><span data-pct="27"></span></div>
+        </div>
+        <div class="weight-row" style="--accent:var(--d3)">
+          <div class="wr-top"><span class="wr-name">3 · Manage security and threats using Microsoft Defender XDR</span><span class="wr-pct">30–35%</span></div>
+          <div class="progress"><span data-pct="32"></span></div>
+        </div>
+        <div class="weight-row" style="--accent:var(--d4)">
+          <div class="wr-top"><span class="wr-name">4 · Manage compliance using Microsoft Purview</span><span class="wr-pct">10–15%</span></div>
+          <div class="progress"><span data-pct="13"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="content" style="border:0;margin-bottom:6px">Study domains</h2>
+    <div class="card-grid">
+      <a class="nav-card" href="domain-1-tenant.html" style="--accent:var(--d1)">
+        <span class="nc-badge">Domain 1 · 25–30%</span>
+        <h3>Deploy &amp; manage a M365 tenant</h3>
+        <p>Tenant creation, domains, org settings, Service Health, M365 Backup, users &amp; groups, licensing, roles, administrative units and PIM.</p>
+        <span class="nc-foot">Start here →</span>
+      </a>
+      <a class="nav-card" href="domain-2-identity.html" style="--accent:var(--d2)">
+        <span class="nc-badge">Domain 2 · 25–30%</span>
+        <h3>Microsoft Entra identity &amp; access</h3>
+        <p>Directory sync (Entra Connect / Cloud Sync), authentication methods, SSPR, Password Protection, Identity Protection, Conditional Access &amp; MFA.</p>
+        <span class="nc-foot">Explore →</span>
+      </a>
+      <a class="nav-card" href="domain-3-defender.html" style="--accent:var(--d3)">
+        <span class="nc-badge">Domain 3 · 30–35%</span>
+        <h3>Security with Defender XDR</h3>
+        <p>Secure Score &amp; Exposure Management, incidents &amp; advanced hunting, Defender for Office 365, for Endpoint, and for Cloud Apps.</p>
+        <span class="nc-foot">Explore →</span>
+      </a>
+      <a class="nav-card" href="domain-4-purview.html" style="--accent:var(--d4)">
+        <span class="nc-badge">Domain 4 · 10–15%</span>
+        <h3>Compliance with Purview</h3>
+        <p>Sensitive info types, retention, sensitivity labels, Content/Activity explorer, and Data Loss Prevention (DLP) including Endpoint DLP.</p>
+        <span class="nc-foot">Explore →</span>
+      </a>
+    </div>
+
+    <h2 class="content" style="border:0;margin-bottom:6px">Before you book</h2>
+    <div class="card-grid">
+      <div class="stat"><div class="s-num">700</div><div class="s-lbl">Score needed to pass (scaled to 1000)</div></div>
+      <div class="stat"><div class="s-num">40–60</div><div class="s-lbl">Typical number of questions</div></div>
+      <div class="stat"><div class="s-num">1 yr</div><div class="s-lbl">Certification renewal (free online)</div></div>
+    </div>
+
+    <div class="callout exam">
+      <p class="ct-title">Exam reality check</p>
+      <p>Expect <strong>case studies</strong>, drag-and-drop ordering, "build list" sequencing, hotspot (dropdown) and yes/no statement sets. Many questions hinge on <em>which tool / which licence / which order</em>. The <a href="exam-tips.html">Exam Tips page</a> collects the highest-yield caveats. Most questions cover GA features; commonly-used Preview features can appear.</p>
+    </div>
+
+    <div class="callout warn">
+      <p class="ct-title">Disclaimer</p>
+      <p>These notes are an independent study aid for <strong>learning purposes only</strong> and are not affiliated with or endorsed by Microsoft. Microsoft constantly renames and re-scopes products — <strong>always verify every detail against the official Microsoft documentation</strong> linked throughout before relying on it.</p>
+    </div>
+
+  </div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

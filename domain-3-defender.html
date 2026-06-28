@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain 3 · Security with Microsoft Defender XDR — MS-102</title>
+  <meta name="description" content="MS-102 Domain 3 study notes: Secure Score & Exposure Management, incidents and advanced hunting, Defender for Office 365 (Safe Links/Attachments, threat & alert policies, attack simulation), Defender for Endpoint, and Defender for Cloud Apps.">
+  <meta name="author" content="Marco Grimaldi">
+  <link rel="canonical" href="https://marcogrimaldi29.com/ms-102-study-notes/domain-3-defender.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0078d4">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="MS-102 Study Notes">
+  <meta property="og:title" content="MS-102 Domain 3 · Security with Microsoft Defender XDR">
+  <meta property="og:description" content="Secure Score and Exposure Management, incidents and advanced hunting, Defender for Office 365, Defender for Endpoint, and Defender for Cloud Apps.">
+  <meta property="og:url" content="https://marcogrimaldi29.com/ms-102-study-notes/domain-3-defender.html">
+  <meta property="og:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MS-102 Domain 3 · Security with Microsoft Defender XDR">
+  <meta name="twitter:description" content="Secure Score, incidents and advanced hunting, Defender for Office 365, Endpoint, and Cloud Apps.">
+  <meta name="twitter:image" content="https://marcogrimaldi29.com/ms-102-study-notes/assets/images/site-mark-no-bg.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"TechArticle","headline":"MS-102 Domain 3 · Security with Microsoft Defender XDR","description":"Secure Score and Exposure Management, incidents and advanced hunting, Defender for Office 365, Defender for Endpoint, and Defender for Cloud Apps.","inLanguage":"en","url":"https://marcogrimaldi29.com/ms-102-study-notes/domain-3-defender.html","author":{"@type":"Person","name":"Marco Grimaldi","url":"https://marcogrimaldi29.com/"},"isPartOf":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"MS-102 Study Notes","item":"https://marcogrimaldi29.com/ms-102-study-notes/"},{"@type":"ListItem","position":2,"name":"Domain 3 · Defender XDR","item":"https://marcogrimaldi29.com/ms-102-study-notes/domain-3-defender.html"}]}]}
+  </script>
+  <link rel="icon" href="assets/images/site-mark-no-bg.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- <script defer src="https://cloud.umami.is/script.js" data-website-id="YOUR-UMAMI-WEBSITE-ID"></script> -->
+</head>
+<body data-page="defender">
+  <div class="layout" style="--accent:var(--d3)">
+
+    <aside class="toc"><h4>On this page</h4><nav id="toc-list"></nav></aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div class="kicker">Domain 3 · 30–35% — heaviest domain</div>
+        <h1>Manage security and threats using Microsoft Defender XDR</h1>
+        <p>The integrated extended detection &amp; response suite. Know which Defender product covers which attack surface, how incidents correlate alerts, and the day-to-day policies for email, endpoint and cloud-app protection.</p>
+      </div>
+
+      <div class="card">
+        <strong>Defender XDR is the umbrella over four workload products:</strong>
+        <div class="mermaid-wrap" style="border:0;box-shadow:none;padding:8px 0;margin:10px 0 0">
+          <div class="mermaid">
+flowchart TD
+  XDR[Microsoft Defender XDR<br/>security.microsoft.com] --> O[Defender for Office 365<br/>email &amp; collaboration]
+  XDR --> E[Defender for Endpoint<br/>devices]
+  XDR --> I[Defender for Identity<br/>on-prem AD signals]
+  XDR --> CA[Defender for Cloud Apps<br/>SaaS / shadow IT]
+  O --> INC[Unified Incidents]
+  E --> INC
+  I --> INC
+  CA --> INC
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Defender product</th><th>Protects</th><th>Key signals / sensors</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Defender for Office 365</strong></td><td>Email, Teams, SharePoint, OneDrive</td><td>Mail flow, URLs, attachments, impersonation</td></tr>
+            <tr><td><strong>Defender for Endpoint</strong></td><td>Workstations &amp; servers (EDR)</td><td>Process/file/network events, vulnerabilities</td></tr>
+            <tr><td><strong>Defender for Identity</strong></td><td>On-prem AD DS / AD FS</td><td>Domain-controller sensors, lateral movement, recon</td></tr>
+            <tr><td><strong>Defender for Cloud Apps</strong></td><td>SaaS &amp; cloud apps (CASB)</td><td>App activity, shadow IT, OAuth apps</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">One portal, one correlated incident queue</p>
+        <p>All four products surface in <strong>security.microsoft.com</strong> and feed a single <strong>incident</strong> queue — Defender XDR automatically <em>correlates</em> alerts across email, endpoint, identity and cloud apps into one attack story. Permissions can be managed by <strong>Defender XDR Unified RBAC</strong> (custom roles built from granular data sources &amp; permission levels) which can supersede the individual product role models.</p>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Defender XDR vs Defender <em>for Cloud</em></p>
+        <p><strong>Microsoft Defender XDR</strong> (security.microsoft.com) protects M365 workloads / endpoints / identities. <strong>Microsoft Defender for Cloud</strong> (Azure portal) is a separate CSPM/CWPP product for Azure/AWS/GCP resources. The exam offers both as options — choose XDR for Microsoft 365 scenarios.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="reports-alerts"><span class="num">3.1</span> Review &amp; respond to security reports and alerts</h2>
+
+      <h3 id="secure-score">Exposure Management &amp; Microsoft Secure Score</h3>
+      <p><strong>Microsoft Secure Score</strong> measures security posture as a <strong>percentage</strong> = points achieved ÷ points achievable. <strong>Improvement actions</strong> are grouped by product: <strong>Identity</strong> (Entra), <strong>Devices</strong> (Defender for Endpoint), <strong>Apps</strong> (O365 / Cloud Apps), and <strong>Data</strong>. A higher score means stronger posture.</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Action status</th><th>Points awarded?</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>To address</td><td>❌ No</td><td>Not yet actioned (default state)</td></tr>
+            <tr><td>Planned</td><td>❌ No</td><td>On the roadmap but not yet done</td></tr>
+            <tr><td>Risk accepted</td><td>❌ No</td><td>You knowingly accept the risk — <em>sacrifices</em> the points</td></tr>
+            <tr><td>Resolved through third party</td><td>✅ <strong>Yes</strong></td><td>Mitigated by a non-Microsoft product</td></tr>
+            <tr><td>Resolved through alternate mitigation</td><td>✅ <strong>Yes</strong></td><td>Mitigated by another internal control</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>Actions can award <strong>partial points</strong> proportional to coverage (e.g. MFA registered for 60% of users = 60% of that action's points).</li>
+        <li>Each action lists <strong>user impact</strong> and <strong>implementation effort</strong>; score data refreshes roughly every 24 hours.</li>
+        <li><strong>Metrics &amp; trends</strong> shows score history and <strong>benchmarks</strong> against organisations of similar size, your industry, and globally.</li>
+        <li><strong>Security Exposure Management</strong> extends Secure Score with attack-surface mapping, <strong>attack paths</strong> to critical assets, <strong>critical asset management</strong>, and <strong>security initiatives</strong> that bundle recommendations by program (e.g. ransomware protection).</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Secure Score ≠ Compliance / Identity Secure Score</p>
+        <p>Microsoft <strong>Secure Score</strong> (security posture) is different from <strong>Compliance Manager / Compliance score</strong> (Purview) and from the legacy "Identity Secure Score". Remember: <em>Risk accepted = no points</em>, but <em>Resolved through third party / alternate mitigation = full points</em>.</p>
+      </div>
+
+      <h3 id="incidents">Incidents &amp; alerts</h3>
+      <p>An <strong>alert</strong> is a single detection; an <strong>incident</strong> is the aggregation of <em>all related alerts + affected assets (devices, users, mailboxes, apps)</em> into one attack story. Defender XDR correlates automatically across products, so one click shows the full kill chain. Manage in <strong>security.microsoft.com → Incidents &amp; alerts</strong>.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  A1[Alert: phishing email<br/>Defender for O365] --> INC((Incident))
+  A2[Alert: malicious file run<br/>Defender for Endpoint] --> INC
+  A3[Alert: suspicious sign-in<br/>Entra / Identity] --> INC
+  A4[Alert: mass download<br/>Defender for Cloud Apps] --> INC
+  INC --> ASSETS[Assets: user · device · mailbox]
+  INC --> STORY[Attack story &amp; graph]
+  INC --> RESP[Respond: assign · classify · remediate]
+        </div>
+        <div class="mm-cap">Correlation: alerts from multiple products roll up into one incident with a shared attack story.</div>
+      </div>
+      <p><strong>Incident management workflow:</strong></p>
+      <ul>
+        <li><strong>Triage</strong> by severity (High / Medium / Low / Informational), <strong>assign</strong> ownership, set status (<em>Active → In progress → Resolved</em>), add <strong>tags</strong> and comments.</li>
+        <li><strong>Classify</strong> when resolving: <em>True positive</em> (with a threat <strong>determination</strong> — malware, phishing, compromised account, etc.), <em>False positive</em>, or <em>Benign positive</em> (real but expected, e.g. a pen-test).</li>
+        <li><strong>Merge</strong> related incidents and <strong>link</strong> alerts; you can <strong>tune an alert</strong> / create a <strong>suppression rule</strong> to reduce noise from known-good activity.</li>
+      </ul>
+
+      <h4>Automated Investigation &amp; Response (AIR) &amp; the Action center</h4>
+      <ul>
+        <li>AIR automatically investigates alerts, gathers <strong>evidence</strong> (files, processes, emails), determines verdicts, and proposes or takes <strong>remediation actions</strong>.</li>
+        <li><strong>Automation level</strong> (Defender for Endpoint device groups): <em>Full</em> = remediate automatically; <em>Semi</em> = require approval (several variants by folder/location); <em>No automated response</em>.</li>
+        <li><strong>Action center</strong> has two tabs — <strong>Pending</strong> (awaiting approval — approve/reject) and <strong>History</strong> (completed actions, with <strong>undo</strong> for reversible ones).</li>
+      </ul>
+
+      <h3 id="hunting">Advanced hunting (KQL)</h3>
+      <p><strong>Advanced hunting</strong> proactively queries up to <strong>30 days</strong> of raw event data using <strong>KQL (Kusto Query Language)</strong>. Two modes: <strong>Guided</strong> (visual query builder, no KQL needed) and <strong>Advanced</strong> (write KQL directly).</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Schema table</th><th>Contains</th></tr></thead>
+          <tbody>
+            <tr><td><code>DeviceEvents</code>, <code>DeviceProcessEvents</code>, <code>DeviceNetworkEvents</code></td><td>Endpoint process, file &amp; network telemetry</td></tr>
+            <tr><td><code>EmailEvents</code>, <code>EmailAttachmentInfo</code>, <code>EmailUrlInfo</code></td><td>Defender for Office 365 mail flow &amp; payloads</td></tr>
+            <tr><td><code>IdentityLogonEvents</code>, <code>IdentityInfo</code></td><td>Sign-ins &amp; identity (Entra + Defender for Identity)</td></tr>
+            <tr><td><code>CloudAppEvents</code></td><td>Defender for Cloud Apps activity</td></tr>
+            <tr><td><code>AlertInfo</code>, <code>AlertEvidence</code></td><td>Alerts &amp; their linked entities</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre class="code"><code><span class="cm">// KQL: emails that delivered a malicious attachment in last 7 days</span>
+EmailAttachmentInfo
+| <span class="kw">where</span> Timestamp &gt; ago(7d)
+| <span class="kw">where</span> MalwareFilterVerdict == <span class="st">"Malware"</span>
+| <span class="kw">join</span> EmailEvents <span class="kw">on</span> NetworkMessageId
+| <span class="kw">project</span> Timestamp, SenderFromAddress, RecipientEmailAddress, FileName, Subject</code></pre>
+      <pre class="code"><code><span class="cm">// KQL: devices that ran a specific suspicious process</span>
+DeviceProcessEvents
+| <span class="kw">where</span> Timestamp &gt; ago(24h)
+| <span class="kw">where</span> FileName <span class="kw">in~</span> (<span class="st">"powershell.exe"</span>, <span class="st">"cmd.exe"</span>)
+| <span class="kw">where</span> ProcessCommandLine <span class="kw">has</span> <span class="st">"-enc"</span>
+| <span class="kw">project</span> Timestamp, DeviceName, AccountName, ProcessCommandLine
+| <span class="kw">order by</span> Timestamp <span class="kw">desc</span></code></pre>
+      <div class="callout tip">
+        <p class="ct-title">Custom detection rules</p>
+        <p>Save a hunting query as a <strong>custom detection rule</strong> to generate alerts automatically. You set the <strong>frequency</strong> (every 24h / 12h / 6h / 3h / continuous (NRT)), the <strong>impacted entities</strong> columns, severity, and <strong>response actions</strong> (isolate device, run AV scan, block file, etc.). The query <em>must</em> return <code>Timestamp</code> and a device/user/mailbox ID column.</p>
+      </div>
+
+      <h3 id="reports">Defender XDR reports</h3>
+      <p>Know which report answers which question:</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Report</th><th>Shows</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Threat protection status</strong></td><td>Malware/phish detections, ZAP actions, detection technology trends</td></tr>
+            <tr><td><strong>Mailflow status / Top senders &amp; recipients</strong></td><td>Mail volume, blocked vs delivered, spoof</td></tr>
+            <tr><td><strong>URL protection</strong></td><td>Safe Links click verdicts (allowed / blocked)</td></tr>
+            <tr><td><strong>Device health / Vulnerable devices</strong></td><td>Sensor health, OS &amp; AV status, exposure</td></tr>
+            <tr><td><strong>Compromised users</strong></td><td>Accounts flagged suspicious or restricted</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="dti">Threat analytics &amp; Defender Threat Intelligence</h3>
+      <p><strong>Threat analytics</strong> is the in-product threat-intelligence dashboard written by Microsoft security researchers. Each <strong>threat analytics report</strong> covers an active campaign, technique or actor and ties it to <em>your</em> tenant:</p>
+      <ul>
+        <li><strong>Overview / Analyst report</strong> — narrative, TTPs and detection details.</li>
+        <li><strong>Related incidents</strong> — incidents in your tenant attributed to this threat.</li>
+        <li><strong>Impacted assets</strong> — your devices/mailboxes affected.</li>
+        <li><strong>Exposure &amp; mitigations</strong> — which recommended configurations you're missing and secure-score-style actions to close the gap.</li>
+      </ul>
+      <p><strong>Microsoft Defender Threat Intelligence (MDTI)</strong> goes deeper: searchable threat-actor profiles, <strong>IOCs</strong> (indicators of compromise — IPs, domains, hashes), and intelligence articles you can pivot from into hunting.</p>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Threat analytics vs Secure Score</p>
+        <p>Both surface "recommendations," but <strong>Threat analytics</strong> mitigations are <em>threat-specific</em> (close gaps for an active campaign), whereas <strong>Secure Score</strong> actions improve overall posture. For "respond to a specific named threat," choose Threat analytics.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="mdo"><span class="num">3.2</span> Email &amp; collaboration protection — Defender for Office 365</h2>
+      <p>Builds on <strong>Exchange Online Protection (EOP)</strong> — the always-on anti-malware/anti-spam baseline for all Exchange Online mailboxes. Defender for Office 365 adds advanced protection in two plans:</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Layer</th><th>Provides</th></tr></thead>
+          <tbody>
+            <tr><td><strong>EOP</strong> (all EXO)</td><td>Anti-malware, anti-spam, anti-phishing (spoof), connection &amp; mail-flow filtering</td></tr>
+            <tr><td><strong>Defender for O365 Plan 1</strong></td><td>Safe Attachments, Safe Links, advanced anti-phishing (impersonation), real-time detections</td></tr>
+            <tr><td><strong>Defender for O365 Plan 2</strong></td><td>Plan 1 + Threat Explorer, Attack Simulation Training, Automated Investigation &amp; Response (AIR), proactive threat hunting</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  M[Inbound email] --> C[Connection filter<br/>IP allow/block]
+  C --> MAL[Anti-malware<br/>+ Safe Attachments]
+  MAL --> SPF[Anti-spoof /<br/>anti-phishing]
+  SPF --> SPAM[Anti-spam<br/>content filter]
+  SPAM --> RULE[Mail flow rules<br/>transport rules]
+  RULE --> D{Verdict}
+  D --> INBOX[Inbox]
+  D --> JUNK[Junk]
+  D --> QUAR[Quarantine]
+        </div>
+        <div class="mm-cap">Simplified EOP / Defender for Office 365 inbound filtering order. Safe Links rewrites URLs at time-of-click after delivery.</div>
+      </div>
+
+      <h3 id="threat-policies">Threat policies &amp; rules</h3>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Policy</th><th>What it does</th><th>Caveat</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Safe Attachments</strong></td><td>Detonates attachments in a sandbox before delivery</td><td>Actions: Off / Monitor / <strong>Block</strong> / Replace / Dynamic Delivery (body delivered, attachment scanned)</td></tr>
+            <tr><td><strong>Safe Links</strong></td><td>Time-of-click URL rewriting &amp; scanning in mail, Teams, Office apps</td><td>Protects against URLs that go bad <em>after</em> delivery</td></tr>
+            <tr><td><strong>Anti-phishing</strong></td><td>Impersonation &amp; spoof intelligence, mailbox intelligence</td><td>P1+ adds user/domain impersonation protection</td></tr>
+            <tr><td><strong>Anti-malware</strong></td><td>Malware filter + <strong>Common Attachments Filter</strong></td><td>Zero-hour Auto Purge (ZAP) removes mail post-delivery</td></tr>
+            <tr><td><strong>Anti-spam</strong></td><td>Inbound/outbound spam &amp; bulk thresholds</td><td>Outbound spam policy can restrict compromised senders</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p class="ct-title">Preset security policies &amp; Configuration Analyzer</p>
+        <p><strong>Standard</strong> and <strong>Strict</strong> preset policies apply Microsoft's recommended settings automatically. The <strong>Configuration Analyzer</strong> compares your custom policies to Standard/Strict and recommends improvements. Policy precedence: <strong>Strict &gt; Standard &gt; custom (by priority) &gt; Built-in protection</strong>.</p>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Tenant Allow/Block List vs transport rules</p>
+        <p>Use the <strong>Tenant Allow/Block List</strong> (Defender portal) to allow/block specific senders, domains, URLs, files. Overrides hierarchy matters: explicit block in the allow/block list, then policies. Don't confuse with Exchange <strong>mail flow (transport) rules</strong>, which are broader mail routing logic.</p>
+      </div>
+
+      <h4>Safe Attachments — actions</h4>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Action</th><th>Behaviour</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Off</strong></td><td>No scanning</td></tr>
+            <tr><td><strong>Monitor</strong></td><td>Deliver, but track detonation verdict</td></tr>
+            <tr><td><strong>Block</strong></td><td>Block the message + attachment (current/future) <span class="pill p-green">recommended</span></td></tr>
+            <tr><td><strong>Dynamic Delivery</strong></td><td>Deliver the <em>body immediately</em>, attach the file once scanning clears (no delay to the email)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li><strong>Safe Attachments for SharePoint, OneDrive &amp; Teams</strong> is a separate global toggle that detonates files already stored in those services.</li>
+        <li><strong>Global settings</strong> include <em>"Turn on Safe Attachments for SharePoint/OneDrive/Teams"</em> and the Safe Documents (Office) option (E5).</li>
+      </ul>
+
+      <h4>Safe Links — key settings</h4>
+      <ul>
+        <li>Rewrites URLs and checks them at <strong>time of click</strong> (not just delivery) for email, Teams, and Office apps — protects against URLs weaponised <em>after</em> delivery.</li>
+        <li>Settings: <em>apply to email / Teams / Office apps</em>, <strong>scan/wait for URL verdict before delivery</strong>, <strong>do not track / do not rewrite</strong> lists, block specific URLs, and <em>don't let users click through to the original URL</em>.</li>
+        <li>The <strong>Tenant Allow/Block List</strong> URL entries override Safe Links verdicts.</li>
+      </ul>
+
+      <h4>Anti-phishing detail</h4>
+      <ul>
+        <li><strong>Spoof intelligence</strong> — detects forged senders of your own / external domains; review in the spoof intelligence insight and allow legitimate spoofers.</li>
+        <li><strong>Impersonation protection (P1+)</strong> — protect specific <strong>users</strong> (e.g. CEO), <strong>domains</strong> (your own + custom), and <strong>mailbox intelligence</strong> (learns each user's normal contacts).</li>
+        <li><strong>Advanced phishing thresholds</strong>: 1 Standard → 2 Aggressive → 3 More aggressive → 4 Most aggressive (higher = more mail treated as phish).</li>
+        <li>Actions on detection: move to Junk, Quarantine, redirect, add safety tips / first-contact safety tip, unauthenticated-sender (?) indicator.</li>
+      </ul>
+
+      <h4>Anti-spam &amp; anti-malware internals</h4>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Concept</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>SCL</strong> (Spam Confidence Level)</td><td>−1 (allow) to 9; higher = more likely spam</td></tr>
+            <tr><td><strong>BCL</strong> (Bulk Complaint Level)</td><td>1–9 rating of bulk/grey mail; threshold configurable</td></tr>
+            <tr><td><strong>ASF</strong> (Advanced Spam Filter)</td><td>Optional aggressive content rules (mostly legacy)</td></tr>
+            <tr><td><strong>Common Attachments Filter</strong></td><td>Anti-malware blocks risky file types by extension (e.g. .exe, .js)</td></tr>
+            <tr><td><strong>ZAP</strong></td><td>Zero-hour Auto Purge retro-removes delivered spam/phish/malware when verdicts change</td></tr>
+            <tr><td><strong>Outbound spam policy</strong></td><td>Limits/automatically restricts senders that exceed sending thresholds (compromise signal)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="alert-policies">Alert policies</h3>
+      <p><strong>Alert policies</strong> (Defender/Purview portal) trigger alerts on activities — e.g. malware campaign detected, unusual external file sharing, a user exceeding sending limits. Many <strong>default alert policies</strong> ship enabled. Each has a severity and can email recipients.</p>
+
+      <h3 id="investigate-email">Investigate &amp; respond to email/collab threats</h3>
+      <ul>
+        <li><strong>Threat Explorer</strong> (P2) / <strong>Real-time detections</strong> (P1): hunt across email by sender, URL, file, campaign; view <strong>detection technology</strong> and delivery location; take action — <strong>soft/hard delete, move to junk/inbox/deleted items</strong>, submit to Microsoft, trigger investigation.</li>
+        <li><strong>Email entity page</strong>: full detail on one message — headers, detonation results, URLs, all delivery/post-delivery events.</li>
+        <li><strong>Submissions</strong> portal: report false positives/negatives to Microsoft; admin submissions can auto-create Tenant Allow/Block List entries.</li>
+        <li><strong>Zero-hour Auto Purge (ZAP)</strong> retroactively moves already-delivered mail to junk/quarantine once a verdict changes.</li>
+        <li><strong>Campaign views</strong> (P2): group coordinated phishing/malware attacks and see the full message set + targeted users.</li>
+      </ul>
+      <h4>Quarantine &amp; quarantine policies</h4>
+      <p>Quarantine holds blocked messages. <strong>Quarantine policies</strong> control what <em>end-users</em> can do with their own quarantined items and whether they get notified:</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>End-user capability</th><th>Typical use</th></tr></thead>
+          <tbody>
+            <tr><td><strong>No access</strong></td><td>High-risk verdicts (malware, high-confidence phish) — admin only</td></tr>
+            <tr><td><strong>Limited access</strong> (request release)</td><td>User can preview &amp; <em>request</em> release; admin approves</td></tr>
+            <tr><td><strong>Full access</strong> (release)</td><td>User can release themselves (e.g. bulk/spam)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — what users can release</p>
+        <p>By default, <strong>malware and high-confidence phishing</strong> are quarantined with <em>admin-only</em> release — end-users cannot release them even with a permissive policy. <strong>Quarantine notifications</strong> (formerly end-user spam notifications) are enabled per quarantine policy.</p>
+      </div>
+
+      <h3 id="attack-sim">Attack simulation training</h3>
+      <p><strong>Attack Simulation Training</strong> (Defender for O365 Plan 2) runs benign phishing campaigns to train users. Technique types: <strong>Credential Harvest, Malware Attachment, Link in Attachment, Link to Malware, Drive-by URL, OAuth Consent Grant</strong>.</p>
+      <ul>
+        <li>Assign <strong>training</strong> automatically to users who fall for the simulation; track a <strong>repeat-offender</strong> and predicted compromise rate.</li>
+        <li>Review the <strong>simulation report</strong> — click rates, credential submission, training completion.</li>
+      </ul>
+
+      <h3 id="restricted">Restricted entities &amp; blocked users</h3>
+      <p>When a user is detected sending too much spam (likely compromised), they are added to <strong>Restricted entities</strong> and <strong>blocked from sending email</strong>. The admin investigates, secures the account (reset password, revoke sessions), then <strong>removes them from the restricted list</strong> to restore sending.</p>
+
+      <!-- ============================================================= -->
+      <h2 id="mde"><span class="num">3.3</span> Endpoint protection — Defender for Endpoint</h2>
+
+      <h3 id="onboard">Onboarding devices</h3>
+      <p><strong>Microsoft Defender for Endpoint (MDE)</strong> is the EDR for devices. Onboarding methods depend on OS/management:</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Scenario</th><th>Onboarding method</th></tr></thead>
+          <tbody>
+            <tr><td>Intune-managed devices</td><td><strong>Intune</strong> connector (Endpoint security) — recommended for cloud</td></tr>
+            <tr><td>Windows (manual / small scale)</td><td><strong>Local onboarding script</strong> from the portal</td></tr>
+            <tr><td>On-prem / domain-joined at scale</td><td><strong>Group Policy</strong> or <strong>Configuration Manager (SCCM/MECM)</strong></td></tr>
+            <tr><td>Servers</td><td>MDE plan / Defender for Servers (Azure Arc / Defender for Cloud)</td></tr>
+            <tr><td>macOS / Linux / mobile</td><td>Platform-specific packages / MDM</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout note">
+        <p class="ct-title">Onboarding &amp; offboarding details</p>
+        <p>Devices appear in the <strong>Device inventory</strong>. Use <strong>Run a detection test</strong> to confirm onboarding. Set <strong>data retention</strong>, <strong>RBAC / device groups</strong> and <strong>device tags</strong> in Settings → Endpoints. <strong>Offboarding</strong> uses a separate script whose package <strong>expires after ~30 days</strong> — don't reuse old packages, and never deploy the offboarding script as your onboarding policy.</p>
+      </div>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — onboarding method by management state</p>
+        <p>Cloud/Intune-managed → <strong>Intune EDR connector</strong> (Endpoint security → EDR). Domain-joined at scale → <strong>Group Policy</strong> or <strong>Configuration Manager</strong>. Standalone/small → <strong>local script</strong>. Down-level servers may need the MMA/unified agent or Defender for Cloud (Azure Arc).</p>
+      </div>
+
+      <h3 id="endpoint-settings">Configure endpoint settings &amp; reduce attack surface</h3>
+      <ul>
+        <li><strong>Advanced features</strong> (Settings → Endpoints): toggles for Defender for Cloud Apps integration, Intune connection, automated investigation, "allow or block file", web content filtering, <strong>Tamper Protection</strong>, and <strong>Live Response</strong>.</li>
+        <li><strong>Attack Surface Reduction (ASR) rules</strong> — block common malware techniques (e.g. <em>block Office apps creating child processes</em>, <em>block credential stealing from LSASS</em>, <em>block executable content from email/USB</em>). Deploy via Intune/GPO and run in <strong>Audit</strong> before <strong>Block</strong>.</li>
+        <li><strong>Network protection</strong> (blocks malicious domains/IPs), <strong>Controlled folder access</strong> (anti-ransomware folder guard), <strong>Web content filtering</strong>, and <strong>EDR in block mode</strong> (remediates even when a third-party AV is primary).</li>
+        <li><strong>Device groups</strong> set RBAC scope + automation level + analyst visibility; <strong>tamper protection</strong> stops attackers/local admins disabling Defender.</li>
+      </ul>
+
+      <h3 id="device-response">Respond to threats on a device</h3>
+      <p>From a device entity page (or via Live Response / custom detection), available <strong>response actions</strong>:</p>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Action</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Isolate device</strong></td><td>Cut network connectivity (Defender still reports in); full or selective isolation</td></tr>
+            <tr><td><strong>Restrict app execution</strong></td><td>Only Microsoft-signed apps may run</td></tr>
+            <tr><td><strong>Run antivirus scan</strong></td><td>Trigger quick/full Defender AV scan remotely</td></tr>
+            <tr><td><strong>Collect investigation package</strong></td><td>Gather forensic artefacts for analysis</td></tr>
+            <tr><td><strong>Live Response</strong></td><td>Remote shell to investigate/remediate (run scripts, pull files)</td></tr>
+            <tr><td><strong>Indicators</strong></td><td>Add file hash / IP / URL / certificate as allow, audit, or <strong>block</strong> across the org</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="vuln">Defender Vulnerability Management (MDVM)</h3>
+      <p><strong>Microsoft Defender Vulnerability Management</strong> surfaces a device <strong>Exposure score</strong> and prioritised <strong>security recommendations</strong>, mapping software <strong>weaknesses (CVEs)</strong> to your devices in real time.</p>
+      <ul>
+        <li>Create a <strong>remediation request</strong> → flows to Intune as a task for the endpoint team (closes the loop between security and IT ops).</li>
+        <li>Apply <strong>exceptions</strong> with justification &amp; expiry when a recommendation can't be actioned.</li>
+        <li>Inventories: <strong>software, browser extensions, certificates, firmware/hardware</strong>; plus <strong>security baselines assessment</strong> against CIS/STIG benchmarks.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Exposure score vs Secure Score for Devices</p>
+        <p>In MDVM, a <strong>lower Exposure score is better</strong> (less exposed to vulnerabilities). The <strong>Secure Score for Devices</strong> (configuration posture) is the opposite — <em>higher is better</em>. Don't mix the directions up.</p>
+      </div>
+
+      <!-- ============================================================= -->
+      <h2 id="mdca"><span class="num">3.4</span> Microsoft Defender for Cloud Apps</h2>
+      <p>The <strong>CASB</strong> (Cloud Access Security Broker) — visibility &amp; control over SaaS apps, shadow IT, and data in the cloud. It works across four stages:</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+  D[1 · Discover<br/>find shadow IT] --> S[2 · Sanction / Govern<br/>tag &amp; connect apps]
+  S --> P[3 · Protect<br/>file policies · DLP · session control]
+  P --> C[4 · Control &amp; respond<br/>alerts · governance actions]
+        </div>
+        <div class="mm-cap">Defender for Cloud Apps lifecycle: discover → sanction → protect → control.</div>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Connection method</th><th>Gives you</th></tr></thead>
+          <tbody>
+            <tr><td><strong>App connector</strong> (vendor API)</td><td>Deep visibility + governance over <em>sanctioned</em> apps (activities, files, OAuth) — acts <em>after</em> the event</td></tr>
+            <tr><td><strong>Cloud Discovery</strong> (traffic logs / MDE)</td><td>Find shadow IT &amp; risk-score discovered apps</td></tr>
+            <tr><td><strong>Conditional Access App Control</strong> (reverse proxy)</td><td><em>Real-time</em>, in-session enforcement during access</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="connector">App connector for Microsoft 365</h3>
+      <p><strong>App connectors</strong> use vendor APIs to connect sanctioned apps for deep visibility &amp; governance. Connect the <strong>Microsoft 365 connector</strong> (one click, uses the same identity platform) to scan activity, files and apply governance to M365 data. App connectors give richer, ongoing control than Cloud Discovery — but they act <em>after</em> activity occurs (not in real time).</p>
+
+      <h3 id="caac">Conditional Access App Control (session &amp; access policies)</h3>
+      <p>Integrates with <strong>Entra Conditional Access</strong> to route sessions through Defender for Cloud Apps as a reverse proxy, enabling <strong>real-time</strong> controls:</p>
+      <ul>
+        <li><strong>Session policies</strong> — monitor or limit <em>within</em> a live session: block download, block copy/paste/print, apply a sensitivity label, block upload of sensitive files (e.g. on an unmanaged device).</li>
+        <li><strong>Access policies</strong> — allow or block the sign-in to the app entirely based on device/user/location signals.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — real-time control needs CAAC</p>
+        <p>To <em>block a download on an unmanaged device in real time</em>, you need a <strong>session policy</strong> via <strong>Conditional Access App Control</strong> — an app connector alone can only act after the fact, and Cloud Discovery only gives visibility.</p>
+      </div>
+
+      <h3 id="mdca-policies">Policies &amp; triggering alerts</h3>
+      <div class="table-wrap">
+        <table class="tbl t-red">
+          <thead><tr><th>Policy type</th><th>Detects / does</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Activity policy</strong></td><td>Single-activity rules (e.g. admin from risky IP) → alert/suspend</td></tr>
+            <tr><td><strong>Anomaly detection</strong></td><td>Impossible travel, unusual activity, mass download (UEBA-based)</td></tr>
+            <tr><td><strong>File policy</strong></td><td>Scan stored files for sensitive data / sharing; quarantine</td></tr>
+            <tr><td><strong>Cloud Discovery policy</strong></td><td>Alert on new/risky discovered apps or data volumes</td></tr>
+            <tr><td><strong>App discovery / OAuth app policy</strong></td><td>Flag risky third-party OAuth apps with broad permissions</td></tr>
+            <tr><td><strong>Session policy</strong></td><td>Real-time controls via Conditional Access App Control (block download, etc.)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="activity-log">Interpret the activity log</h3>
+      <p>The <strong>activity log</strong> records every action (sign-ins, file ops, admin changes) ingested from connected apps. Filter by user, app, IP, location; pivot to investigate; promote a recurring pattern into an <strong>activity policy</strong>.</p>
+
+      <h3 id="cloud-discovery">Cloud App Discovery &amp; responding to findings</h3>
+      <ul>
+        <li><strong>Cloud Discovery</strong> analyses traffic logs (from firewalls/proxies, or continuously via <strong>Defender for Endpoint integration</strong>) to reveal <strong>shadow IT</strong> — apps employees use without IT approval.</li>
+        <li>Each discovered app gets a <strong>risk score (0–10)</strong> based on ~90 risk factors (compliance, security, legal).</li>
+        <li>Respond by tagging apps <strong>Sanctioned / Unsanctioned</strong>; unsanctioning (with MDE integration) can <strong>block</strong> the app on endpoints.</li>
+      </ul>
+      <div class="callout exam">
+        <p class="ct-title">Caveat — Discovery vs Connector vs Session control</p>
+        <p><strong>Cloud Discovery</strong> = find shadow IT from logs (visibility). <strong>App connector</strong> = API-level governance of sanctioned apps (after-the-fact). <strong>Conditional Access App Control / session policies</strong> = real-time, in-session enforcement (e.g. block download on unmanaged device). Match the requirement to the right mechanism.</p>
+      </div>
+
+      <div class="pager">
+        <a class="prev" href="domain-2-identity.html"><div class="pg-dir">← Previous</div><div class="pg-title">Domain 2 · Identity</div></a>
+        <a class="next" href="domain-4-purview.html"><div class="pg-dir">Next →</div><div class="pg-title">Domain 4 · Purview compliance</div></a>
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
