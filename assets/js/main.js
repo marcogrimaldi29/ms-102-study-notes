@@ -6,18 +6,35 @@
 (function () {
   "use strict";
 
-  // ---- path helper: resolve asset/links relative to repo root ----
-  // Pages live at root, so links are flat. ROOT lets us stay portable.
-  var ROOT = "";
+  // ---- path helper: resolve asset/links relative to the site root ----
+  // The home page lives at the site root; every other page lives in its own
+  // folder (e.g. /domain-1-tenant/) for clean, extensionless URLs. ROOT is the
+  // relative prefix back to the site root ("" at root, "../" inside a folder),
+  // derived from this script's own src so it works at any depth.
+  var ROOT = (function () {
+    var s = document.currentScript;
+    if (!s) {
+      var all = document.getElementsByTagName("script");
+      for (var i = 0; i < all.length; i++) {
+        if (/assets\/js\/main\.js/.test(all[i].getAttribute("src") || "")) { s = all[i]; break; }
+      }
+    }
+    var m = (s && (s.getAttribute("src") || "")).match(/^(.*?)assets\/js\/main\.js/);
+    return m ? m[1] : "";
+  })();
 
+  // href: "" means the site root (resolved to "./" or "../" via ROOT below).
   var PAGES = [
-    { id: "home",     href: "index.html",            label: "Home" },
-    { id: "tenant",   href: "domain-1-tenant.html",  label: "1 · Tenant" },
-    { id: "identity", href: "domain-2-identity.html",label: "2 · Identity" },
-    { id: "defender", href: "domain-3-defender.html",label: "3 · Defender XDR" },
-    { id: "purview",  href: "domain-4-purview.html", label: "4 · Purview" },
-    { id: "tips",     href: "exam-tips.html",        label: "Exam Tips" }
+    { id: "home",     href: "",                   label: "Home" },
+    { id: "tenant",   href: "domain-1-tenant/",   label: "1 · Tenant" },
+    { id: "identity", href: "domain-2-identity/", label: "2 · Identity" },
+    { id: "defender", href: "domain-3-defender/", label: "3 · Defender XDR" },
+    { id: "purview",  href: "domain-4-purview/",  label: "4 · Purview" },
+    { id: "tips",     href: "exam-tips/",         label: "Exam Tips" }
   ];
+
+  // Resolve a page href against ROOT, never yielding an empty href.
+  function pageHref(href) { return (ROOT + href) || "./"; }
 
   // ---------- THEME ----------
   function applyTheme(t) {
@@ -40,14 +57,14 @@
     var current = document.body.getAttribute("data-page") || "home";
     var nav = PAGES.map(function (p) {
       var active = p.id === current ? " active" : "";
-      return '<a class="' + active.trim() + '" href="' + ROOT + p.href + '">' + p.label + "</a>";
+      return '<a class="' + active.trim() + '" href="' + pageHref(p.href) + '">' + p.label + "</a>";
     }).join("");
 
     var header = document.createElement("header");
     header.className = "site-header";
     header.innerHTML =
       '<button class="icon-btn nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>' +
-      '<a class="brand" href="' + ROOT + 'index.html">' +
+      '<a class="brand" href="' + pageHref("") + '">' +
         '<img src="' + ROOT + 'assets/images/site-mark-no-bg.png" alt="logo">' +
         '<span><span class="brand-full">MS-102 </span>Study Notes</span>' +
       "</a>" +
@@ -93,11 +110,11 @@
         "</div>" +
         '<div class="footer-col">' +
           "<h5>Study Domains</h5>" +
-          '<a href="' + ROOT + 'domain-1-tenant.html">1 · Deploy &amp; manage tenant</a>' +
-          '<a href="' + ROOT + 'domain-2-identity.html">2 · Entra identity &amp; access</a>' +
-          '<a href="' + ROOT + 'domain-3-defender.html">3 · Defender XDR security</a>' +
-          '<a href="' + ROOT + 'domain-4-purview.html">4 · Purview compliance</a>' +
-          '<a href="' + ROOT + 'exam-tips.html">Exam tips &amp; caveats</a>' +
+          '<a href="' + ROOT + 'domain-1-tenant/">1 · Deploy &amp; manage tenant</a>' +
+          '<a href="' + ROOT + 'domain-2-identity/">2 · Entra identity &amp; access</a>' +
+          '<a href="' + ROOT + 'domain-3-defender/">3 · Defender XDR security</a>' +
+          '<a href="' + ROOT + 'domain-4-purview/">4 · Purview compliance</a>' +
+          '<a href="' + ROOT + 'exam-tips/">Exam tips &amp; caveats</a>' +
         "</div>" +
         '<div class="footer-col">' +
           "<h5>Official Resources</h5>" +
