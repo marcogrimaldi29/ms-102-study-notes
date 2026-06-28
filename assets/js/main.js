@@ -181,16 +181,29 @@
     bars.forEach(function (b) { obs.observe(b); });
   }
 
-  // ---------- BACK TO TOP ----------
+  // ---------- FLOATING BUTTONS (home + back to top) ----------
   function backToTop() {
+    var home = document.createElement("a");
+    home.className = "icon-btn float-btn float-home";
+    home.innerHTML = "🏠";
+    home.href = pageHref("");
+    home.setAttribute("aria-label", "Back to home");
+    home.setAttribute("title", "Home");
+
     var btn = document.createElement("button");
-    btn.className = "icon-btn back-top";
+    btn.className = "icon-btn float-btn back-top";
     btn.innerHTML = "↑";
     btn.setAttribute("aria-label", "Back to top");
+    btn.setAttribute("title", "Back to top");
     btn.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+
+    document.body.appendChild(home);
     document.body.appendChild(btn);
+
     window.addEventListener("scroll", function () {
-      btn.classList.toggle("show", window.scrollY > 600);
+      var show = window.scrollY > 600;
+      home.classList.toggle("show", show);
+      btn.classList.toggle("show", show);
     }, { passive: true });
   }
 
