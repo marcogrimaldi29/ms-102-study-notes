@@ -61,7 +61,7 @@ Spotted an error, an outdated detail, or have an improvement? **Contributions ar
 
 - 🌐 Website / certification hub: **[marcogrimaldi29.com](https://marcogrimaldi29.com/)**
 - ⌨️ GitHub: **[github.com/marcogrimaldi29](https://github.com/marcogrimaldi29)**
-- 💼 LinkedIn: **[linkedin.com/in/marcogrimaldi29](https://www.linkedin.com/in/marco-grimaldi29/)**
+- 💼 LinkedIn: **[linkedin.com/in/marco-grimaldi29](https://www.linkedin.com/in/marco-grimaldi29/)**
 
 Part of a wider collection of certification reviews and study notes (Microsoft, Google, PeopleCert) on my personal hub.
 
