@@ -54,8 +54,8 @@
         <table class="tbl t-purple">
           <thead><tr><th>Model</th><th>Where password is validated</th><th>Needs on-prem servers?</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td><strong>Password Hash Sync (PHS)</strong></td><td>In the cloud (hash-of-a-hash synced)</td><td>No (just sync)</td><td>Simplest, most resilient; enables leaked-credential detection in Identity Protection <span class="pill p-green">recommended</span></td></tr>
-            <tr><td><strong>Pass-through Auth (PTA)</strong></td><td>On-prem AD (via lightweight agents)</td><td>Yes — agents</td><td>Password never stored in cloud; needs HA agents</td></tr>
+            <tr><td><strong>Password Hash Sync (PHS)</strong></td><td>In the cloud (hash-of-a-hash synced)</td><td>No (just sync)</td><td>Simplest, most resilient; enables leaked-credential detection in Identity Protection <span class="pill p-green">Recommended</span></td></tr>
+            <tr><td><strong>Pass-Through Auth (PTA)</strong></td><td>On-prem AD (via lightweight agents)</td><td>Yes — agents</td><td>Password never stored in cloud; needs HA agents</td></tr>
             <tr><td><strong>Federation (AD FS)</strong></td><td>On-prem AD FS farm</td><td>Yes — AD FS infra</td><td>Most complex; for advanced/3rd-party MFA, smartcards</td></tr>
           </tbody>
         </table>
@@ -95,7 +95,7 @@
         <p class="ct-title">Caveat — which to choose</p>
         <p>Pick <strong>Cloud Sync</strong> for: multiple disconnected forests, simple needs, lightweight HA, no on-prem footprint. Pick <strong>Connect Sync</strong> when you need <strong>device/Hybrid Join sync, Exchange hybrid writeback, complex transformations, or pass-through auth at scale</strong>. Both can run side-by-side during migration but must not manage the same objects.</p>
       </div>
-      <p><strong>Sync features (Connect Sync):</strong></p>
+      <p><strong>Sync features (Entra Connect Sync):</strong></p>
       <ul>
         <li><strong>Filtering</strong> — limit scope by domain, OU, or attribute.</li>
         <li><strong>Password writeback</strong> — required so SSPR/PIM password changes flow back to on-prem AD (needs Entra ID P1).</li>
@@ -118,7 +118,7 @@ Start-ADSyncSyncCycle -PolicyType Initial</code></pre>
 
       <h3 id="sync-troubleshoot">Troubleshooting synchronization</h3>
       <ul>
-        <li><strong>Synchronization Service Manager</strong> (miisclient) and <strong>Synchronization Rules Editor</strong> on the Connect server diagnose run profiles &amp; rule logic.</li>
+        <li><strong>Synchronization Service Manager</strong> (MIISCLIENT) and <strong>Synchronization Rules Editor</strong> on the Connect server diagnose run profiles &amp; rule logic.</li>
         <li><strong>Duplicate attribute resiliency</strong> quarantines conflicting <code>proxyAddresses</code>/UPN instead of failing the whole sync.</li>
         <li>Sync errors appear in the Entra admin center under <strong>Health &amp; monitoring</strong>; common causes: data mismatch, duplicates, large object changes blocked by the <strong>export deletion threshold</strong> (default 500 — a mass change is blocked until you allow it).</li>
         <li>For Cloud Sync, use the <strong>provisioning logs</strong> and agent status in the portal.</li>
@@ -132,12 +132,12 @@ Start-ADSyncSyncCycle -PolicyType Initial</code></pre>
       <h2 id="auth"><span class="num">2.2</span> Implement and manage authentication</h2>
 
       <h3 id="auth-methods">Authentication methods</h3>
-      <p>Managed centrally in the <strong>Authentication methods policy</strong> (Entra admin center → Protection → Authentication methods). Microsoft is migrating legacy MFA/SSPR method management into this single converged policy — target users by group.</p>
+      <p>Managed centrally in the <strong>Authentication methods | Policies</strong> (Entra admin center → Entra ID → Authentication methods). Microsoft is migrating legacy MFA/SSPR method management into this single converged policy — target users by group.</p>
       <div class="table-wrap">
         <table class="tbl">
           <thead><tr><th>Method</th><th>Strength</th><th>Notes</th></tr></thead>
           <tbody>
-            <tr><td><strong>Passkey (FIDO2) / Windows Hello</strong></td><td>Phishing-resistant <span class="pill p-green">strongest</span></td><td>Microsoft's recommended direction</td></tr>
+            <tr><td><strong>Passkey (FIDO2) / Windows Hello</strong></td><td>Phishing-resistant <span class="pill p-green">Strongest</span></td><td>Microsoft's recommended direction</td></tr>
             <tr><td><strong>Certificate-based auth (CBA)</strong></td><td>Phishing-resistant</td><td>Smartcards / PKI</td></tr>
             <tr><td><strong>Microsoft Authenticator</strong></td><td>Strong</td><td>Push w/ <strong>number matching</strong> (now enforced), or passwordless phone sign-in</td></tr>
             <tr><td><strong>OATH hardware/software tokens</strong></td><td>Medium</td><td>TOTP codes</td></tr>
@@ -172,7 +172,7 @@ Start-ADSyncSyncCycle -PolicyType Initial</code></pre>
 
       <h3 id="auth-troubleshoot">Investigate &amp; resolve authentication issues</h3>
       <ul>
-        <li><strong>Sign-in logs</strong> (Entra → Monitoring) show interactive/non-interactive sign-ins with <strong>failure reason &amp; error code</strong>, CA policy applied, and device/location. Four log types: interactive, non-interactive, service principal, managed identity.</li>
+        <li><strong>Sign-in logs</strong> (Entra ID → Monitoring & health) show interactive/non-interactive sign-ins with <strong>failure reason &amp; error code</strong>, CA policy applied, and device/location. Four log types: interactive, non-interactive, service principal, managed identity.</li>
         <li><strong>Sign-in diagnostic</strong> wizard guides remediation of common failures (MFA, CA block, etc.).</li>
         <li>Watch for <strong>legacy authentication</strong> (POP/IMAP/SMTP basic auth) — it bypasses MFA and should be blocked via Conditional Access.</li>
       </ul>
@@ -198,7 +198,7 @@ Start-ADSyncSyncCycle -PolicyType Initial</code></pre>
       <!-- ============================================================= -->
       <h2 id="secure-access"><span class="num">2.3</span> Implement and manage secure access</h2>
 
-      <h3 id="identity-protection">Microsoft Entra Identity Protection</h3>
+      <h3 id="identity-protection">Microsoft Entra ID Protection</h3>
       <p>Uses Microsoft's threat intelligence to detect <strong>risk</strong> and respond automatically. Requires <strong>Entra ID P2</strong>.</p>
       <div class="table-wrap">
         <table class="tbl t-purple">
@@ -286,7 +286,7 @@ flowchart LR
       </div>
 
       <h3 id="ca-baseline">Recommended Conditional Access baseline</h3>
-      <p>Microsoft's "secure foundation" set of policies — recognise these scenarios on the exam:</p>
+      <p>Microsoft's "secure foundation" set of policies — recognize these scenarios on the exam:</p>
       <div class="table-wrap">
         <table class="tbl t-purple">
           <thead><tr><th>Policy</th><th>Target → Control</th></tr></thead>
