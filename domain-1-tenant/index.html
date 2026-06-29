@@ -110,15 +110,15 @@ flowchart LR
   A[Service event detected] --> B{Impact?}
   B -->|Limited| C[Advisory]
   B -->|Critical / widespread| D[Incident]
-  C --> E[Message center post]
+  C --> E[Service health issue]
   D --> E
   E --> F[Email notifications<br/>to chosen recipients]
         </div>
-        <div class="mm-cap">Service Health feeds the Message center; configure email notifications to be alerted.</div>
+        <div class="mm-cap">Service Health displays the issues and health status for your subscriptions; configure email notifications to be alerted.</div>
       </div>
       <ul>
         <li><strong>Message center</strong> (separate from Service health) announces upcoming <em>changes</em>, new/planned features and required actions — you can configure weekly digest emails and assign Message center reader role.</li>
-        <li>Configure <strong>Service health notifications</strong> (Preferences) to email up to 2 addresses per profile when incidents/advisories are posted.</li>
+        <li>Configure <strong>Service health notifications</strong> (Customize) to email up to 2 addresses per profile when incidents/advisories are posted.</li>
       </ul>
       <div class="callout exam">
         <p class="ct-title">Caveat — Service health vs Message center</p>
@@ -179,8 +179,8 @@ flowchart LR
       <h3 id="adoption-usage">Monitoring adoption &amp; usage</h3>
       <ul>
         <li><strong>Reports → Usage</strong>: per-service activity (email, Teams, SharePoint, OneDrive, active users, etc.). Default retention windows of 7/30/90/180 days.</li>
-        <li><strong>Microsoft 365 Adoption Score</strong> (Reports → Adoption Score): organisational benchmarks across communication, meetings, content collaboration, mobility, teamwork, plus endpoint/network experiences.</li>
-        <li>Privacy: in Org settings you can <strong>de-identify (conceal) user, group and site names</strong> in all reports.</li>
+        <li><strong>Reports → Adoption Score</strong> (Microsoft 365 Adoption Score): organisational benchmarks across communication, meetings, content collaboration, mobility, teamwork, plus endpoint/network experiences.</li>
+        <li><strong>Settings → Org settings → Services → Reports</strong>: you can <strong>de-identify (conceal) user, group and site names</strong> in all reports.</li>
       </ul>
       <div class="callout note">
         <p class="ct-title">Who can see reports</p>
