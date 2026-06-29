@@ -48,7 +48,7 @@
 
       <!-- ============================================================= -->
       <h2 id="info-protection"><span class="num">4.1</span> Information protection &amp; data lifecycle</h2>
-      <p>Microsoft frames information protection as a four-stage cycle — recognise which feature serves which stage:</p>
+      <p>Microsoft frames information protection as a four-stage cycle — recognize which feature serves which stage:</p>
       <div class="mermaid-wrap">
         <div class="mermaid">
 flowchart LR
@@ -86,7 +86,7 @@ flowchart LR
       </ol>
       <div class="callout note">
         <p class="ct-title">When to choose which classifier</p>
-        <p><strong>SIT</strong> = well-known patterns (card numbers). <strong>EDM</strong> = match <em>your exact</em> records with very low false positives at scale. <strong>Trainable classifier</strong> = categorise by <em>meaning</em> where there's no fixed pattern. Trainable classifiers come <strong>pre-trained</strong> (e.g. Resumes, Source code, Harassment, Profanity) or you build a <strong>custom</strong> one by feeding 50–500 sample documents (seed) then test.</p>
+        <p><strong>SIT</strong> = well-known patterns (card numbers). <strong>EDM</strong> = match <em>your exact</em> records with very low false positives at scale. <strong>Trainable classifier</strong> = categorize by <em>meaning</em> where there's no fixed pattern. Trainable classifiers come <strong>pre-trained</strong> (e.g. Resumes, Source code, Harassment, Profanity) or you build a <strong>custom</strong> one by feeding 50–500 sample documents (seed) then test.</p>
       </div>
 
       <h3 id="retention">Retention labels &amp; retention policies (data lifecycle)</h3>
@@ -103,7 +103,7 @@ flowchart LR
       </div>
       <div class="callout exam">
         <p class="ct-title">Caveat — principles of retention (conflict resolution)</p>
-        <p>When multiple retention settings apply, the outcome follows this order: <strong>1) Retention wins over deletion</strong> (keep beats delete) → <strong>2) Longest retention period wins</strong> → <strong>3) Explicit (label) wins over implicit (policy)</strong> → <strong>4) Shortest deletion period wins</strong>. Memorise this — it's a classic exam item.</p>
+        <p>When multiple retention settings apply, the outcome follows this order: <strong>1) Retention wins over deletion</strong> (keep beats delete) → <strong>2) Longest retention period wins</strong> → <strong>3) Explicit (label) wins over implicit (policy)</strong> → <strong>4) Shortest deletion period wins</strong>. Memorize this — it's a classic exam item.</p>
       </div>
       <ul>
         <li>A <strong>retention label policy</strong> publishes labels to locations so users can apply them; an <strong>auto-apply</strong> label policy applies them based on conditions (SITs, keywords, trainable classifiers).</li>
@@ -175,7 +175,7 @@ flowchart LR
       <h3 id="dlp-policies">DLP policies across Microsoft 365 workloads</h3>
       <p>A DLP policy = <strong>locations</strong> + <strong>rules</strong> (conditions → actions). Supported locations now include:</p>
       <ul>
-        <li><strong>Exchange Online</strong> email, <strong>SharePoint Online</strong>, <strong>OneDrive</strong>, <strong>Teams</strong> chat &amp; channel messages, <strong>Devices (Endpoint DLP)</strong>, <strong>Power BI</strong>, <strong>on-prem repositories</strong>, and <strong>Microsoft 365 Copilot</strong> (restrict labeled content from being summarised/processed).</li>
+        <li><strong>Exchange Online</strong> email, <strong>SharePoint Online</strong>, <strong>OneDrive</strong>, <strong>Teams</strong> chat &amp; channel messages, <strong>Devices (Endpoint DLP)</strong>, <strong>Power BI</strong>, <strong>on-prem repositories</strong>, and <strong>Microsoft 365 Copilot</strong> (restrict labeled content from being summarized/processed).</li>
       </ul>
       <div class="table-wrap">
         <table class="tbl t-teal">
@@ -202,7 +202,7 @@ flowchart LR
             <tr><td><strong>SharePoint / OneDrive</strong></td><td>Block external/everyone sharing of matching files; auto-remove access</td></tr>
             <tr><td><strong>Teams chat &amp; channels</strong></td><td>Block sharing sensitive messages; requires the content to be sent (not just typed)</td></tr>
             <tr><td><strong>Endpoint (devices)</strong></td><td>Control copy/print/USB/upload (see below)</td></tr>
-            <tr><td><strong>Microsoft 365 Copilot</strong></td><td>Exclude content with a chosen sensitivity label from being processed/summarised by Copilot</td></tr>
+            <tr><td><strong>Microsoft 365 Copilot</strong></td><td>Exclude content with a chosen sensitivity label from being processed/summarized by Copilot</td></tr>
             <tr><td><strong>Power BI / on-prem (scanner)</strong></td><td>Detect &amp; alert on sensitive datasets / repositories</td></tr>
           </tbody>
         </table>
