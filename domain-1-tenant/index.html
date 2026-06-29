@@ -95,7 +95,7 @@
         <dt>Security &amp; privacy</dt>
         <dd>Self-service password reset link, sharing settings, idle session timeout, privacy statement, and the <strong>password expiration policy</strong> (Microsoft recommends "never expire").</dd>
         <dt>Services</dt>
-        <dd>Per-service toggles: Bookings, Cortana, Microsoft Forms, reports (anonymised names), user owned apps and services, mail, etc.</dd>
+        <dd>Per-service toggles: Bookings, Cortana, Microsoft Forms, reports (anonymized names), user owned apps and services, mail, etc.</dd>
       </dl>
       <div class="callout tip">
         <p class="ct-title">Release preferences</p>
@@ -209,7 +209,7 @@ flowchart LR
           <thead><tr><th>Account type</th><th>How it is created</th><th>Sign-in</th></tr></thead>
           <tbody>
             <tr><td><strong>Cloud-only</strong></td><td>Created directly in Entra ID</td><td>Entra credentials</td></tr>
-            <tr><td><strong>Synchronised</strong></td><td>Synced from on-prem AD via Entra Connect/Cloud Sync</td><td>Managed in on-prem AD</td></tr>
+            <tr><td><strong>Synchronized</strong></td><td>Synced from on-prem AD via Entra Connect/Cloud Sync</td><td>Managed in on-prem AD</td></tr>
             <tr><td><strong>Guest (B2B)</strong></td><td>Invited by email; UPN ends <code>#EXT#@tenant</code></td><td>Their own home org / one-time passcode</td></tr>
           </tbody>
         </table>
@@ -307,7 +307,7 @@ Import-Csv users.csv | ForEach-Object {
         <table class="tbl">
           <thead><tr><th>Role</th><th>Can do</th><th>Cannot</th></tr></thead>
           <tbody>
-            <tr><td><strong>Global Administrator</strong></td><td>Everything, incl. billing &amp; all admin centers</td><td>— (most privileged; minimise count)</td></tr>
+            <tr><td><strong>Global Administrator</strong></td><td>Everything, incl. billing &amp; all admin centers</td><td>— (most privileged; minimize count)</td></tr>
             <tr><td><strong>Global Reader</strong></td><td>Read-only across everything Global Admin sees</td><td>Make any changes</td></tr>
             <tr><td><strong>User Administrator</strong></td><td>Create/manage users &amp; groups, reset most passwords</td><td>Reset passwords of higher-privileged admins</td></tr>
             <tr><td><strong>Privileged Role Administrator</strong></td><td>Manage role assignments &amp; PIM settings</td><td>—</td></tr>
@@ -399,7 +399,7 @@ flowchart LR
       </div>
       <p><strong>Per-role settings</strong> (Role settings): max activation duration, require MFA on activation, require justification/ticket, require approval (and approvers), and activation/assignment notifications. <strong>Access reviews</strong> periodically re-attest eligibility.</p>
       <div class="callout exam">
-        <p class="ct-title">Caveat — licence editions to memorise</p>
+        <p class="ct-title">Caveat — licence editions to memorize</p>
         <p><strong>PIM &amp; Identity Protection = Entra ID P2.</strong> <strong>Conditional Access, SSPR (writeback for hybrid), dynamic groups, group-based licensing, administrative units = Entra ID P1.</strong> Security defaults &amp; basic MFA = free. These licence facts are heavily tested.</p>
       </div>
 
