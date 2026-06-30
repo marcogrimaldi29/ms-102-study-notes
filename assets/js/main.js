@@ -88,7 +88,7 @@
       '<div class="footer-inner">' +
         '<div class="footer-col footer-col-author">' +
           '<div class="author-card">' +
-            '<img src="' + ROOT + 'assets/images/marcogrimaldi29.png" alt="Marco Grimaldi">' +
+            '<img src="' + ROOT + 'assets/images/marcogrimaldi29.jpg" alt="Marco Grimaldi">' +
             '<div>' +
               '<span class="maintainer-badge">Maintainer</span>' +
               '<div class="ac-name">Marco Grimaldi</div>' +
