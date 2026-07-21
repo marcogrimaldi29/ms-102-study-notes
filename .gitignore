@@ -1,0 +1,8 @@
+# Claude Code local config (launch.json, settings.local.json, etc.)
+.claude/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
