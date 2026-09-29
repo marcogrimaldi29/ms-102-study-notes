@@ -8,8 +8,6 @@ Comprehensive, exam-focused study notes for the **Microsoft MS-102: Microsoft 36
 
 ### 👉 [Read the notes online](https://marcogrimaldi29.com/ms-102-study-notes/)
 
-> ⭐ **If these notes help you, please [star the repo](https://github.com/marcogrimaldi29)** — it supports the project and helps other learners find it.
-
 ---
 
 ## ⚠️ Disclaimer
@@ -49,9 +47,20 @@ The site uses **[Umami](https://umami.is/)** for **cookieless, privacy-respectin
 
 ---
 
-## 🤝 Contributing
+## 🐞 Spotted a mistake?
 
-Spotted an error, an outdated detail, or have an improvement? **Contributions are welcome** — open an [issue](https://github.com/marcogrimaldi29) or a pull request. Corrections that keep the notes accurate against the latest Microsoft documentation are especially appreciated.
+Microsoft 365 changes fast and products are often renamed, so if something here is wrong or out of date, please [report an issue](https://github.com/marcogrimaldi29/ms-102-study-notes/issues).
+
+---
+
+## 💚 Support
+
+If these notes helped you prepare for MS-102, there are a couple of ways to show it: ⭐ star this repo on GitHub so other candidates can find it, or 🤝 connect with me on LinkedIn.
+
+<p>
+  <a href="https://github.com/marcogrimaldi29/ms-102-study-notes"><img src="https://img.shields.io/badge/Star_on_GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Star on GitHub" /></a>
+  <a href="https://www.linkedin.com/in/marco-grimaldi29/"><img src="https://img.shields.io/badge/Connect_on_LinkedIn-0A66C2?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMC40NDcgMjAuNDUyaC0zLjU1NHYtNS41NjljMC0xLjMyOC0uMDI3LTMuMDM3LTEuODUyLTMuMDM3LTEuODUzIDAtMi4xMzYgMS40NDUtMi4xMzYgMi45Mzl2NS42NjdIOS4zNTFWOWgzLjQxNHYxLjU2MWguMDQ2Yy40NzctLjkgMS42MzctMS44NSAzLjM3LTEuODUgMy42MDEgMCA0LjI2NyAyLjM3IDQuMjY3IDUuNDU1djYuMjg2ek01LjMzNyA3LjQzM2EyLjA2MiAyLjA2MiAwIDAgMS0yLjA2My0yLjA2NSAyLjA2NCAyLjA2NCAwIDEgMSAyLjA2MyAyLjA2NXptMS43ODIgMTMuMDE5SDMuNTU1VjloMy41NjR2MTEuNDUyek0yMi4yMjUgMEgxLjc3MUMuNzkyIDAgMCAuNzc0IDAgMS43Mjl2MjAuNTQyQzAgMjMuMjI3Ljc5MiAyNCAxLjc3MSAyNGgyMC40NTFDMjMuMiAyNCAyNCAyMy4yMjcgMjQgMjIuMjcxVjEuNzI5QzI0IC43NzQgMjMuMiAwIDIyLjIyNSAweiIvPjwvc3ZnPg%3D%3D" alt="Connect on LinkedIn" /></a>
+</p>
 
 ---
 
