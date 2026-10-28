@@ -238,7 +238,10 @@
     if (!nodes.length) return;
     if (reRender) {
       nodes.forEach(function (n) {
-        if (n.getAttribute("data-src")) { n.removeAttribute("data-processed"); n.innerHTML = n.getAttribute("data-src"); }
+        if (n.getAttribute("data-src")) {
+          n.removeAttribute("data-processed");
+          n.textContent = n.getAttribute("data-src") || "";
+        }
       });
     } else {
       nodes.forEach(function (n) { if (!n.getAttribute("data-src")) n.setAttribute("data-src", n.textContent.trim()); });
