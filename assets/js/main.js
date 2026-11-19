@@ -80,6 +80,30 @@
     });
   }
 
+  // ---------- RETIREMENT BANNER ----------
+  // Exam MS-102 / Microsoft 365 Certified: Administrator Expert retire on
+  // November 30, 2026 at 11:59 PM Central Standard Time (UTC-6), per the
+  // official study guide. The banner switches to past tense after that moment.
+  var RETIREMENT_UTC = Date.UTC(2026, 11, 1, 5, 59); // Dec 1 2026 05:59 UTC = Nov 30 11:59 PM CST
+  function buildRetirementBanner() {
+    var header = document.querySelector(".site-header");
+    if (!header) return;
+    var retired = Date.now() >= RETIREMENT_UTC;
+    var bar = document.createElement("div");
+    bar.className = "retire-banner";
+    bar.setAttribute("role", "note");
+    bar.innerHTML =
+      '<span class="rb-icon" aria-hidden="true">📅</span>' +
+      "<span>" +
+        (retired
+          ? "<strong>Exam MS-102 retired on November 30, 2026.</strong> These notes stay online for reference. Its successor is "
+          : "<strong>Exam MS-102 retires on November 30, 2026</strong> (11:59 PM CST). Its successor is ") +
+        "<strong>Exam AB-650</strong> (Microsoft 365 and AI Services Administrator Associate). " +
+        '<a href="' + pageHref("") + '#retirement">What this means →</a>' +
+      "</span>";
+    header.parentNode.insertBefore(bar, header.nextSibling);
+  }
+
   // ---------- FOOTER ----------
   function buildFooter() {
     var f = document.createElement("footer");
@@ -121,6 +145,7 @@
           "<h5>Official Resources</h5>" +
           '<a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ms-102" target="_blank" rel="noopener">MS-102 Study Guide</a>' +
           '<a href="https://learn.microsoft.com/en-us/training/courses/ms-102t00" target="_blank" rel="noopener">Course MS-102T00-A</a>' +
+          '<a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ab-650" target="_blank" rel="noopener">AB-650 Study Guide (successor)</a>' +
           '<a href="https://learn.microsoft.com/en-us/microsoft-365/" target="_blank" rel="noopener">Microsoft 365 docs</a>' +
           '<a href="https://learn.microsoft.com/en-us/defender/" target="_blank" rel="noopener">Microsoft Defender docs</a>' +
           '<a href="https://learn.microsoft.com/en-us/entra/" target="_blank" rel="noopener">Microsoft Entra docs</a>' +
@@ -282,6 +307,7 @@
   loadUmami();
   document.addEventListener("DOMContentLoaded", function () {
     buildHeader();
+    buildRetirementBanner();
     buildFooter();
     buildTOC();
     animateProgress();

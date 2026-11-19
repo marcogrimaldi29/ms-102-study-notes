@@ -125,6 +125,16 @@ img { max-width: 100%; }
 
 .nav-toggle { display: none; }
 
+/* Retirement banner (injected under the header by main.js) */
+.retire-banner {
+  display: flex; align-items: flex-start; justify-content: center; gap: 10px;
+  padding: 9px 22px; font-size: .9rem; line-height: 1.5; color: var(--text);
+  background: color-mix(in srgb, var(--ms-orange) 11%, var(--surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--ms-orange) 35%, var(--border));
+}
+.retire-banner .rb-icon { flex: none; }
+.retire-banner a { font-weight: 600; white-space: nowrap; }
+
 /* ===================== Layout ===================== */
 .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 34px;
   max-width: var(--maxw); margin: 0 auto; padding: 28px 24px 80px; }
@@ -407,10 +417,11 @@ ol.steps > li::before { counter-increment: step; content: counter(step); positio
   .hero h1 { font-size: 1.9rem; }
   .brand .brand-full { display: none; }
   .ghub-link span { display: none; }
+  .retire-banner { justify-content: flex-start; padding: 8px 16px; font-size: .84rem; }
 }
 
 @media print {
-  .site-header, .toc, .site-footer, .float-btn, .pager { display: none; }
+  .site-header, .retire-banner, .toc, .site-footer, .float-btn, .pager { display: none; }
   .layout { grid-template-columns: 1fr; }
   body { background: #fff; }
 }
