@@ -3,10 +3,16 @@
 [![Built with HTML/CSS/JS](https://img.shields.io/badge/Built%20with-HTML%20%C2%B7%20CSS%20%C2%B7%20JS-0078d4)](#)
 [![Exam](https://img.shields.io/badge/Exam-MS--102-5c2d91)](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ms-102)
 [![Live site](https://img.shields.io/badge/Read%20online-marcogrimaldi29.com-107c10)](https://marcogrimaldi29.com/ms-102-study-notes/)
+[![Retires](https://img.shields.io/badge/Retires-Nov%2030%2C%202026-d83b01)](https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams)
 
 Comprehensive, exam-focused study notes for the **Microsoft MS-102: Microsoft 365 Administrator** certification — a free, modern study companion to the official Microsoft documentation.
 
 ### 👉 [Read the notes online](https://marcogrimaldi29.com/ms-102-study-notes/)
+
+> [!WARNING]
+> **MS-102 retires on November 30, 2026 at 11:59 PM Central Standard Time.** Microsoft is retiring both **Exam MS-102** and the **Microsoft 365 Certified: Administrator Expert** certification on that date. After it, you can't take the exam, earn the certification, or renew it. If you already hold it, it stays on your Microsoft Learn transcript until its current expiry date. ([study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ms-102) · [certification page](https://learn.microsoft.com/en-us/credentials/certifications/m365-administrator-expert/) · [exam retirement](https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams))
+>
+> **Successor:** [Exam AB-650: Administering Microsoft 365 and AI Services](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ab-650) leads to [Microsoft 365 Certified: Microsoft 365 and AI Services Administrator Associate](https://learn.microsoft.com/en-us/credentials/certifications/ai-services-administrator-associate/), as announced in Microsoft's [June 2026 credentials roundup](https://techcommunity.microsoft.com/blog/skills-hub-blog/microsoft-credentials-roundup-june-2026/4528350). Note that it's an **Associate**-level certification, not an Expert one.
 
 ---
 
@@ -31,6 +37,20 @@ Aligned to the official **MS-102 "Skills Measured"** (version effective **April 
 | [Manage security and threats using Microsoft Defender XDR](https://marcogrimaldi29.com/ms-102-study-notes/domain-3-defender/) | 30–35% |
 | [Manage compliance using Microsoft Purview](https://marcogrimaldi29.com/ms-102-study-notes/domain-4-purview/) | 10–15% |
 | [Exam tips & high-yield caveats](https://marcogrimaldi29.com/ms-102-study-notes/exam-tips/) | — |
+
+### Studying for AB-650 instead?
+
+AB-650 (20–25% tenants and workloads · 40–45% governance and security · 35–40% AI services) reuses much of the MS-102 administration core. Measured against the [AB-650 skills measured](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ab-650):
+
+| These notes | Relevance to AB-650 |
+|---|---|
+| 1 · Tenant | **Mostly**: domains, org settings, Service health, Backup, licensing, users, groups, roles, PIM and admin units carry over. Adds branding, AI licensing, and mailbox, Teams and SharePoint management. |
+| 2 · Identity | **Partly**: authentication methods, SSPR, Password Protection, Conditional Access, Identity Protection and MFA carry over. Directory sync isn't listed. |
+| 3 · Defender XDR | **Narrower**: only Defender for Office 365 is listed. Defender for Endpoint, Defender for Cloud Apps, Secure Score and advanced hunting aren't listed. |
+| 4 · Purview | **Reframed**: DLP, labels and retention as "identify requirements", plus DSPM for AI. |
+| Not covered | **New**: Copilot, agents, Agent 365, Entra Agent ID and the Copilot Control System (35–40%). |
+
+The [home page](https://marcogrimaldi29.com/ms-102-study-notes/#retirement) has the full comparison.
 
 ### Features
 
@@ -82,6 +102,8 @@ Part of a wider collection of certification reviews and study notes (Microsoft, 
 - [Course MS-102T00: Microsoft 365 Administrator](https://learn.microsoft.com/en-us/training/courses/ms-102t00)
 - [Free official practice assessment](https://learn.microsoft.com/en-us/credentials/certifications/exams/ms-102/practice/assessment)
 - [Microsoft 365 documentation](https://learn.microsoft.com/en-us/microsoft-365/)
+- [Exam and assessment lab retirement](https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams) · [Credential retirement](https://learn.microsoft.com/en-us/credentials/support/credential-retirement)
+- Successor: [AB-650 Study Guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ab-650) · [Microsoft 365 and AI Services Administrator Associate](https://learn.microsoft.com/en-us/credentials/certifications/ai-services-administrator-associate/) · [Course AB-650T00](https://learn.microsoft.com/en-us/training/courses/ab-650t00)
 
 ---
 

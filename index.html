@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MS-102 Study Notes · Microsoft 365 Administrator</title>
-  <meta name="description" content="Comprehensive, exam-focused study notes for the Microsoft MS-102: Microsoft 365 Administrator certification. Aligned to the latest skills measured with progress bars, diagrams, tables and exam caveats.">
+  <meta name="description" content="Comprehensive, exam-focused study notes for the Microsoft MS-102: Microsoft 365 Administrator certification. Aligned to the latest skills measured with progress bars, diagrams, tables and exam caveats. MS-102 retires on November 30, 2026; its successor is Exam AB-650.">
   <meta name="author" content="Marco Grimaldi">
   <link rel="icon" href="assets/images/site-mark-no-bg.png">
   <link rel="stylesheet" href="assets/css/style.css">
@@ -40,6 +40,7 @@
         <span>✅ Pass mark: 700/1000</span>
         <span>📚 4 skill domains</span>
         <span>🎓 Administrator Expert</span>
+        <span>📅 Retires Nov 30, 2026</span>
       </div>
     </section>
 
@@ -103,11 +104,56 @@
       </a>
     </div>
 
+    <h2 id="retirement" class="content" style="border:0;margin-bottom:6px">MS-102 is retiring: what it means for you</h2>
+    <p class="lead" style="margin-top:0">Microsoft is retiring <strong>Exam MS-102</strong> and the <strong>Microsoft 365 Certified: Administrator Expert</strong> certification on <strong>November 30, 2026 at 11:59 PM Central Standard Time</strong>.</p>
+
+    <div class="callout warn">
+      <p class="ct-title">Retirement: November 30, 2026</p>
+      <p><strong>Still preparing?</strong> Sit the exam before the deadline. After it, you can no longer take MS-102 or earn the certification.</p>
+      <p><strong>Already certified?</strong> Your certification stays on your Microsoft Learn transcript, as an active certification, until its current expiry date. If you're eligible to renew before November 30, 2026, Microsoft recommends doing so. Once the certification retires, you can't renew it.</p>
+      <p>Sources: <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ms-102" target="_blank" rel="noopener">MS-102 study guide</a> · <a href="https://learn.microsoft.com/en-us/credentials/certifications/m365-administrator-expert/" target="_blank" rel="noopener">Administrator Expert certification page</a> · <a href="https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams" target="_blank" rel="noopener">Exam retirement</a> · <a href="https://learn.microsoft.com/en-us/credentials/support/credential-retirement" target="_blank" rel="noopener">Credential retirement</a></p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">The successor: Exam AB-650</h3>
+      <p>Microsoft's <a href="https://techcommunity.microsoft.com/blog/skills-hub-blog/microsoft-credentials-roundup-june-2026/4528350" target="_blank" rel="noopener">June 2026 credentials roundup</a> names <strong>Exam AB-650: Administering Microsoft 365 and AI Services</strong> as the replacement for MS-102. Passing AB-650 earns <a href="https://learn.microsoft.com/en-us/credentials/certifications/ai-services-administrator-associate/" target="_blank" rel="noopener">Microsoft 365 Certified: Microsoft 365 and AI Services Administrator Associate</a>. No other exam or certification is listed as an MS-102 replacement.</p>
+      <div class="table-wrap">
+        <table class="tbl t-slate">
+          <thead><tr><th></th><th>MS-102 (retiring)</th><th>AB-650 (successor)</th></tr></thead>
+          <tbody>
+            <tr><td>Certification</td><td>Microsoft 365 Certified: Administrator Expert</td><td>Microsoft 365 Certified: Microsoft 365 and AI Services Administrator Associate</td></tr>
+            <tr><td>Level</td><td><span class="pill p-purple">Expert</span> Also requires one of the prerequisite associate certifications</td><td><span class="pill p-blue">Associate</span> Earned by passing AB-650</td></tr>
+            <tr><td>Skills at a glance</td><td>Tenant 25–30% · Entra identity &amp; access 25–30% · Defender XDR 30–35% · Purview 10–15%</td><td>Configure &amp; manage M365 tenants and workloads 20–25% · Govern &amp; secure M365 tenants and workloads 40–45% · Manage &amp; secure AI services in M365 35–40%</td></tr>
+            <tr><td>Instructor-led course</td><td><a href="https://learn.microsoft.com/en-us/training/courses/ms-102t00" target="_blank" rel="noopener">MS-102T00</a> (5 days)</td><td><a href="https://learn.microsoft.com/en-us/training/courses/ab-650t00" target="_blank" rel="noopener">AB-650T00</a> (3 days)</td></tr>
+            <tr><td>Renewal</td><td>Annual, free online, but not after the certification retires</td><td>Annual (every 12 months), free online</td></tr>
+            <tr><td>Practice assessment</td><td>Available</td><td>Not yet available. Microsoft says these usually follow within 8 weeks of general availability</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>How these notes map to AB-650</h3>
+      <p>AB-650 keeps much of the MS-102 administration core and adds a large Copilot and agents domain. Here's how each page of these notes lines up with the <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ab-650" target="_blank" rel="noopener">AB-650 skills measured</a>:</p>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>These notes</th><th>Relevance to AB-650</th></tr></thead>
+          <tbody>
+            <tr><td><a href="domain-1-tenant/">1 · Tenant</a></td><td><span class="pill p-green">Mostly</span> These all reappear: domains, org settings, Service health, network connectivity insights, Microsoft 365 Backup, licensing (including group-based), users, groups, contacts, roles, PIM, administrative units and Graph PowerShell. AB-650 adds tenant branding, licensing for AI services, and managing mailboxes, Teams and SharePoint sites.</td></tr>
+            <tr><td><a href="domain-2-identity/">2 · Identity</a></td><td><span class="pill p-amber">Partly</span> These carry over: authentication methods, SSPR, Password Protection, Conditional Access, Identity Protection and MFA. Directory synchronization (IdFix, Entra Connect Sync / Cloud Sync, Connect Health) isn't listed in the AB-650 skills.</td></tr>
+            <tr><td><a href="domain-3-defender/">3 · Defender XDR</a></td><td><span class="pill p-red">Narrower</span> Only Defender for Office 365 is listed: alerts, threat policies, investigation &amp; response, and attack simulation training. Secure Score and Exposure Management, incidents and advanced hunting, Defender for Endpoint, Defender for Cloud Apps and Threat Intelligence aren't listed as skills. The audience profile only asks for an understanding of Defender XDR capabilities.</td></tr>
+            <tr><td><a href="domain-4-purview/">4 · Purview</a></td><td><span class="pill p-blue">Reframed</span> DLP (now including endpoints and Copilot), sensitive info types, sensitivity labels and retention are phrased as <em>identify requirements</em>. AB-650 also adds Data Security Posture Management (DSPM) for monitoring AI activity.</td></tr>
+            <tr><td>Not covered here</td><td><span class="pill p-gray">New</span> The AI services domain (35–40%): Copilot readiness and settings, Copilot Search and connectors, agents and Microsoft Agent 365, Microsoft Entra Agent ID, the agent registry and the Copilot Control System. Use the AB-650 study guide and course AB-650T00 for these topics.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-bottom:0;font-size:.9rem;color:var(--text-muted)">This mapping compares the MS-102 and AB-650 skills measured as published on Microsoft Learn in November 2026. Related topics may still be tested, so always check the official study guide before you book.</p>
+    </div>
+
     <h2 class="content" style="border:0;margin-bottom:6px">Before you book</h2>
     <div class="card-grid">
+      <div class="stat"><div class="s-num">Nov 30</div><div class="s-lbl">Last day to take MS-102 (2026, by 11:59 PM CST)</div></div>
       <div class="stat"><div class="s-num">700</div><div class="s-lbl">Score needed to pass (scaled to 1000)</div></div>
       <div class="stat"><div class="s-num">40–60</div><div class="s-lbl">Typical number of questions</div></div>
-      <div class="stat"><div class="s-num">1y</div><div class="s-lbl">Certification renewal (free online)</div></div>
+      <div class="stat"><div class="s-num">1y</div><div class="s-lbl">Certification renewal (free online, until the certification retires)</div></div>
     </div>
 
     <div class="callout exam">
